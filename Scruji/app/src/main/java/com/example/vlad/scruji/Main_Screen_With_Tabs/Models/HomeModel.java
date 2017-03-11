@@ -1,9 +1,7 @@
 package com.example.vlad.scruji.Main_Screen_With_Tabs.Models;
 
 
-import io.realm.RealmObject;
-
-public  class HomeModel extends RealmObject {
+public  class HomeModel  {
 
     private String name;
     private String lastname;

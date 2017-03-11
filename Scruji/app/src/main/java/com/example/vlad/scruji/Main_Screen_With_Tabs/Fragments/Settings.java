@@ -22,6 +22,7 @@ import com.example.vlad.scruji.Login_Register_Stuff.Models.Models.ServerRequest;
 import com.example.vlad.scruji.Login_Register_Stuff.Models.Models.ServerResponse;
 import com.example.vlad.scruji.Login_Register_Stuff.Models.Models.User;
 import com.example.vlad.scruji.R;
+import com.example.vlad.scruji.Set_User_Profile_Data.DB.UserProfileDB;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -122,6 +123,7 @@ public class Settings extends Fragment implements View.OnClickListener {
     }
 
     private void logout() {
+
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(Constants.IS_LOGGED_IN,false);
         editor.putBoolean(Constants.PROFILE_CREATED,true);
@@ -129,6 +131,7 @@ public class Settings extends Fragment implements View.OnClickListener {
         editor.putString(Constants.NAME,"");
         editor.putString(Constants.UNIQUE_ID,"");
         editor.apply();
+        Log.d("TAG+","LOGOUT SCREEN MUST BE EMPTY "+pref.getString(Constants.UNIQUE_ID,""));
         goToLogin();
     }
 

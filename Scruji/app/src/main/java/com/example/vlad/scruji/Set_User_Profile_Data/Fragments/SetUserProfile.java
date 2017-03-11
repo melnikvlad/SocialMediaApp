@@ -1,6 +1,7 @@
 package com.example.vlad.scruji.Set_User_Profile_Data.Fragments;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,17 +28,19 @@ import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Main_Screen_With_Tabs.Fragments.MainScreenWithTabsFragment;
 import com.example.vlad.scruji.Main_Screen_With_Tabs.Models.HomeModel;
 import com.example.vlad.scruji.R;
+import com.example.vlad.scruji.Set_User_Profile_Data.DB.UserProfileDB;
 import com.example.vlad.scruji.Set_User_Profile_Data.Interfaces.SetUserProfileInterface;
 import com.example.vlad.scruji.Set_User_Profile_Data.Models.Request;
+import com.example.vlad.scruji.Set_User_Profile_Data.Models.UserDB;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,73 +51,38 @@ import static android.app.Activity.RESULT_OK;
 
 public class SetUserProfile extends Fragment {
 
-    private EditText editName ,editLastname,editCountry,editCity,editAge,editHeight;
-    private RadioGroup radioSex,radioHair,radioEye;
+    private EditText editName ,editLastname,editCountry,editCity,editAge;
     private Button saveButton;
-    private String name,surname,age,country,city,sex,height,eye_clr,hair_clr;
+    private String name,surname,age,country,city;
     private SharedPreferences pref;
-    private MainScreenWithTabsFragment mainScreenWithTabsFragment;
     private ImageView imageView;
     private Bitmap bitmap;
-    Realm myRealm;
+    private UserProfileDB db;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mainScreenWithTabsFragment =new  MainScreenWithTabsFragment();
         pref = getActivity().getPreferences(0);
-        myRealm = Realm.getDefaultInstance();
+        db = new UserProfileDB(getActivity().getApplicationContext());
 
         View view = inflater.inflate(R.layout.fragment_set_user_info,container,false);
         initViews(view);
 
         return view;
     }
-
-
+    //============================================VIEWS INITIALIZATION================================================================
     public void initViews(View view)
     {
+        Log.d("TAG+","SETUP SCREEN MUST BE SMTHNG "+pref.getString(Constants.UNIQUE_ID,""));
         saveButton      = (Button)  view.findViewById(R.id.btn_save);
         editName        = (EditText)view.findViewById(R.id.et_name);
         editLastname    = (EditText)view.findViewById(R.id.et_lastname);
         editCity        = (EditText)view.findViewById(R.id.et_city);
         editCountry     = (EditText)view.findViewById(R.id.et_country);
         editAge         = (EditText)view.findViewById(R.id.et_age);
-        editHeight      = (EditText)view.findViewById(R.id.et_height);
-        radioSex        = (RadioGroup)view.findViewById(R.id.radioSex);
-        radioHair       = (RadioGroup)view.findViewById(R.id.radioHair);
-        radioEye        = (RadioGroup)view.findViewById(R.id.radioEye);
         imageView       = (ImageView) view.findViewById(R.id.imageView);
 
-
-        radioSex.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton radioButton = (RadioButton)radioGroup.findViewById(i);
-                if(null!=radioButton && i > -1){
-                    Toast.makeText(getActivity(), radioButton.getText(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        radioHair.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton radioButton = (RadioButton)radioGroup.findViewById(i);
-                if(null!=radioButton && i > -1){
-                    Toast.makeText(getActivity(), radioButton.getText(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        radioEye.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                RadioButton radioButton = (RadioButton)radioGroup.findViewById(i);
-                if(null!=radioButton && i > -1){
-                    Toast.makeText(getActivity(), radioButton.getText(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,113 +90,85 @@ public class SetUserProfile extends Fragment {
                 showFileChooser();
             }
         });
-
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                RadioButton rbS = (RadioButton) radioSex.findViewById(radioSex.getCheckedRadioButtonId());
-                RadioButton rbH = (RadioButton) radioHair.findViewById(radioHair.getCheckedRadioButtonId());
-                RadioButton rbE = (RadioButton) radioEye.findViewById(radioEye.getCheckedRadioButtonId());
-
-                name = editName.getText().toString();
+                name    = editName.getText().toString();
                 surname = editLastname.getText().toString();
-                age = editAge.getText().toString();
+                age     = editAge.getText().toString();
                 country = editCountry.getText().toString();
-                city = editCity.getText().toString();
-                sex = rbS.getText().toString();
-                height = editHeight.getText().toString();
-                eye_clr = rbE.getText().toString();
-                hair_clr = rbH.getText().toString();
+                city    = editCity.getText().toString();
 
-                insertToRealmDB(name, surname, age, country, city, sex, height, eye_clr, hair_clr);
+                createProfile(pref.getString(Constants.UNIQUE_ID,""), name, surname, age, country, city);
                 uploadImage();
-                createProfile(pref.getString(Constants.UNIQUE_ID,""), name, surname, age, country, city, sex, height, eye_clr, hair_clr);
 
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putBoolean(Constants.PROFILE_CREATED,true);
-                editor.apply();
 
-                android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_frame,mainScreenWithTabsFragment);
-                ft.commit();
             }
         });
     }
+    //============================================CREATE PROFILE================================================================
     public void createProfile(String user_id, String name, String lastname, String age,
-                              String country, String city, String sex, String height, String eye_clr, String hair_clr) {
+                              String country, String city) {
 
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
+        db.insertData(new UserDB(user_id,name,lastname,age,country,city));
+        List<UserDB> users = db.getAllData();
+        Log.d("TAG+","SETUP SCREEN ID IN LIST "+users.get(users.size()-1).getUser_id());
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+
+            SetUserProfileInterface service = retrofit.create(SetUserProfileInterface.class);
+                    Request request = new Request();
+                    request.setUser_id(users.get(users.size()-1).getUser_id());
+                    request.setName(users.get(users.size()-1).getName());
+                    request.setSurname(users.get(users.size()-1).getSurname());
+                    request.setAge(users.get(users.size()-1).getAge());
+                    request.setCountry(users.get(users.size()-1).getCountry());
+                    request.setCity(users.get(users.size()-1).getCity());
 
 
-        SetUserProfileInterface service = retrofit.create(SetUserProfileInterface.class);
+                Call<String> call = service.operation(
+                        request.getUser_id(),
+                        request.getName(),
+                        request.getSurname(),
+                        request.getAge(),
+                        request.getCountry(),
+                        request.getCity());
 
-        Request request = new Request();
-        request.setUser_id(user_id);
-        request.setName(name);
-        request.setSurname(lastname);
-        request.setAge(age);
-        request.setCountry(country);
-        request.setCity(city);
-        request.setSex(sex);
-        request.setHeight(height);
-        request.setEye_clr(eye_clr);
-        request.setHair_clr(hair_clr);
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        Log.d("TAG+","OKEY RESPONSE : "+ response.body().toString());
+                    }
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.d("TAG+","ERROR RESPONSE : "+ t.getMessage().toString());
+                    }
 
-        Call<String> call = service.operation(
-                request.getUser_id().toString(),
-                request.getName().toString(),
-                request.getSurname().toString(),
-                request.getAge().toString(),
-                request.getCountry().toString(),
-                request.getCity().toString(),
-                request.getSex().toString(),
-                request.getHeight().toString(),
-                request.getEye_clr().toString(),
-                request.getHair_clr().toString());
+                });
 
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-            }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-
-            }
-        });
-    }
-
-    public void insertToRealmDB(String name, String lastname, String age,
-                                String country, String city, String sex, String height, String eye_clr, String hair_clr)
-    {
-
-        myRealm.beginTransaction();
-        HomeModel homeModel = myRealm.createObject(HomeModel.class);
-        homeModel.setName(name);
-        homeModel.setLastname(lastname);
-        homeModel.setAge(age);
-        homeModel.setCountry(country);
-        homeModel.setCity(city);
-        homeModel.setSex(sex);
-        homeModel.setHeight(height);
-        homeModel.setEye_clr(eye_clr);
-        homeModel.setHair_clr(hair_clr);
-        myRealm.commitTransaction();
-
-        RealmResults<HomeModel> results = myRealm.where(HomeModel.class).findAll();
-        for (HomeModel h:results)
-        {
-            Log.d("REALM",h.getName().toString());
+            goToProfile();
         }
-    }
+        //============================================GO TO PROFILE====================================================================
+private void goToProfile(){
+    SharedPreferences.Editor editor = pref.edit();
+    editor.putBoolean(Constants.PROFILE_CREATED,true);
+    editor.apply();
 
+    Log.d("TAG+","SETUP SCREEN GO TO PROFILE "+pref.getString(Constants.UNIQUE_ID,""));
+    MainScreenWithTabsFragment profile = new MainScreenWithTabsFragment();
+    android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+    ft.replace(R.id.fragment_frame,profile);
+    ft.commit();;
+}
+//============================================UPLOAD IMAGE TO SERVER================================================================
     private void uploadImage(){
 
         StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.POST, Constants.UPLOAD_URL,

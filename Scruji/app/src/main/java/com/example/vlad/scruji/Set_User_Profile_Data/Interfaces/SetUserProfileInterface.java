@@ -14,9 +14,5 @@ public interface SetUserProfileInterface {
                            @Field("surname")    String surname,
                            @Field("age")        String age,
                            @Field("country")    String country,
-                           @Field("city")       String city,
-                           @Field("sex")        String sex,
-                           @Field("height")     String height,
-                           @Field("eye_clr")    String eye_clr,
-                           @Field("hair_clr")   String hair_clr);
+                           @Field("city")       String city);
 }

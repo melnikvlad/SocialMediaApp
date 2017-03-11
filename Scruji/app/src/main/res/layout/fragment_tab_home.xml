@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#8B1C62">
+    android:background="#000000">
 <LinearLayout
     android:layout_width="match_parent"
     android:orientation="vertical"
@@ -19,13 +19,12 @@
         android:id="@+id/imageView1"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:src="@drawable/home"
-        app:civ_border_color="#8B1C62"
+        app:civ_border_color="#000000"
         app:civ_border_width="4dp"
         app:civ_shadow="true"
         android:layout_marginLeft="100dp"
         app:civ_shadow_radius="10"
-        app:civ_shadow_color="#000000"/>
+        app:civ_shadow_color="#111111"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -45,152 +44,34 @@
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/add"
         android:layout_width="match_parent"
-        android:orientation="vertical"
         android:layout_height="wrap_content"
-        android:background="@android:color/background_light"
         android:layout_marginTop="2dp"
+        android:background="@android:color/background_light"
+        android:orientation="vertical"
         android:scaleX="0.97"
         android:scaleY="0.97">
 
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:orientation="horizontal"
-
-    android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="108dp"
-            android:id="@+id/sexText"
-            android:text="Sex "
-            android:layout_height="wrap_content"
-            android:textSize="21sp"
-            android:textColor="@android:color/black"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textStyle="normal|bold" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="120dp"
-            android:id="@+id/eyeText"
-            android:text="Eye color"
-            android:layout_height="wrap_content"
-            android:textSize="21sp"
-            android:textColor="@android:color/black"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textStyle="normal|bold" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="145dp"
-            android:id="@+id/hairText"
-            android:text="Hair color"
-            android:layout_height="wrap_content"
-            android:textSize="21sp"
-            android:textColor="@android:color/black"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textStyle="normal|bold" />
-    </LinearLayout>
-
-
-
-</LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_marginTop="15dp"
-        android:layout_height="40dp">
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="110dp"
-                android:id="@+id/sex"
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/floatingActionButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:textAlignment="center"
-                android:textAllCaps="true" />
+                android:layout_weight="1"
+                android:clickable="true"
+                app:fabSize="normal"
+                android:src="@drawable/add2" />
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="120dp"
-                android:id="@+id/eye"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:textAlignment="center"
-                android:textAllCaps="true" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="146dp"
-                android:id="@+id/hair"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:textAlignment="center"
-                android:textAllCaps="true" />
-        </LinearLayout>
-
-
 
     </LinearLayout>
-        </LinearLayout>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/background_light"
-    android:layout_marginTop="2dp"
-    android:scaleX="0.97"
-    android:scaleY="0.97"
-    android:layout_height="202dp">
-
-    <co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView
-        android:id="@+id/realm_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:rrvLayoutType="LinearLayout"
-        app:rrvSwipeToDelete="true"
-        app:rrvEmptyLayoutId="@layout/to_do_empty_view"
-        >
-
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            app:fabSize="mini"
-            app:srcCompat="@android:drawable/ic_input_add"
-            android:id="@+id/fab" />
-    </co.moonmonkeylabs.realmrecyclerview.RealmRecyclerView>
-
-</LinearLayout>
 
 </LinearLayout>

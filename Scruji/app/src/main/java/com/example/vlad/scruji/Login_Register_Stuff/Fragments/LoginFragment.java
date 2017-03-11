@@ -4,6 +4,7 @@ package com.example.vlad.scruji.Login_Register_Stuff.Fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
@@ -62,7 +63,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
 
             case R.id.tv_register:
                 goToRegister();
@@ -72,24 +73,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 String email = et_email.getText().toString();
                 String password = et_password.getText().toString();
 
-                if(!email.isEmpty() && !password.isEmpty()) {
+                if (!email.isEmpty() && !password.isEmpty()) {
 
                     progress.setVisibility(View.VISIBLE);
-                    loginProcess(email,password);
-                    if(pref.getBoolean(Constants.PROFILE_CREATED,true))
-                    {
-                        goToProfile();
-                    }
-                    else
-                    {
-                        goToCreateProfile();
-                    }
-                } else {
+                    loginProcess(email, password);
 
-                    Snackbar.make(getView(), "Fields are empty !", Snackbar.LENGTH_LONG).show();
+                    break;
                 }
-                break;
-
         }
     }
     private void loginProcess(String email,String password){
@@ -121,12 +111,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                     editor.putString(Constants.EMAIL,resp.getUser().getEmail());
                     editor.putString(Constants.NAME,resp.getUser().getName());
                     editor.putString(Constants.UNIQUE_ID,resp.getUser().getUnique_id());
-                    Log.d("UNIQ_ID_FROM_LOGIN",resp.getUser().getUnique_id());
                     editor.apply();
-
-                   // Log.d("UNIQ_ID_FROM_LOGIN",resp.getUser().getUnique_id());
+                    Log.d("TAG+","LOGIN SCREEN MUST BE SMTHNG "+pref.getString(Constants.UNIQUE_ID,""));
                 }
                 progress.setVisibility(View.INVISIBLE);
+                goToProfile();
             }
 
             @Override
@@ -149,11 +138,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     }
 
     private void goToProfile(){
-
+        if(pref.getBoolean(Constants.PROFILE_CREATED,true))
+        {
+            Log.d("TAG+","LOGIN SCREEN GO TO PROFILE "+pref.getString(Constants.UNIQUE_ID,""));
             MainScreenWithTabsFragment profile = new MainScreenWithTabsFragment();
             android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_frame,profile);
             ft.commit();
+        }
+        else
+        {
+            goToCreateProfile();
+        }
     }
     private void goToCreateProfile(){
 
