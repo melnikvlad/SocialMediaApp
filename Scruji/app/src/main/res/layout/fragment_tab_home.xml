@@ -58,20 +58,52 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="1">
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/floatingActionButton"
+
+            <Button
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/addTagbtn"
+                android:background="@drawable/add" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:clickable="true"
-                app:fabSize="normal"
-                android:src="@drawable/add2" />
+                android:layout_weight="0.13"
+                android:text="Add Tag:"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@android:color/background_dark"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:layout_weight="0.45"
+                android:id="@+id/editTag"
+                android:visibility="visible" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textAdd"
+                android:text="Add"
+                android:textAlignment="center"
+                android:textColor="@android:color/background_dark"
+                android:textSize="24sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>
-
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
+    </android.support.v7.widget.RecyclerView>
 </LinearLayout>
