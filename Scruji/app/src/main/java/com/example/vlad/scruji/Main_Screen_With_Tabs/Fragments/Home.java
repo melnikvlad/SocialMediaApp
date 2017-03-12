@@ -1,11 +1,8 @@
 package com.example.vlad.scruji.Main_Screen_With_Tabs.Fragments;
 
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,18 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vlad.scruji.Constants.Constants;
 
-import com.example.vlad.scruji.Main_Screen_With_Tabs.Models.DB;
+
+import com.example.vlad.scruji.Main_Screen_With_Tabs.DB.TagSQL;
+import com.example.vlad.scruji.Main_Screen_With_Tabs.Models.MyTag;
 import com.example.vlad.scruji.Main_Screen_With_Tabs.RecyclerVIews.TagsAdapter;
 import com.example.vlad.scruji.R;
 import com.example.vlad.scruji.Set_User_Profile_Data.DB.UserProfileDB;
-import com.example.vlad.scruji.Set_User_Profile_Data.Models.Request;
-import com.example.vlad.scruji.Set_User_Profile_Data.Models.UserDB;
+import com.example.vlad.scruji.Set_User_Profile_Data.Models.User;
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Callback;
@@ -35,10 +31,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static android.R.id.list;
 
 
 public class Home extends Fragment{
@@ -47,16 +40,17 @@ public class Home extends Fragment{
     private TextView name_lastname_age,country_city,textAdd;
     private EditText editTag;
     private Button addTagbtn;
-    private UserProfileDB db;
+    private UserProfileDB userdb;
+    private TagSQL tagdb;
     private int  id;
     private RecyclerView rv;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager manager;
-
+    private List<String> list;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final List<String> list = new ArrayList<>();
+        list = new ArrayList<>();
         View view = inflater.inflate(R.layout.fragment_tab_home,container,false);
         roundedImageView = (CircularImageView) view.findViewById(R.id.imageView1);
         name_lastname_age = (TextView)view.findViewById(R.id.name_lastname_age);
@@ -65,12 +59,31 @@ public class Home extends Fragment{
         editTag = (EditText)view.findViewById(R.id.editTag);
         textAdd = (TextView)view.findViewById(R.id.textAdd);
         rv = (RecyclerView)view.findViewById(R.id.recycler_view);
+
+        manager = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(manager);
+        adapter = new TagsAdapter(getActivity().getApplication(),list);
+        rv.setAdapter(adapter);
+
+        pref = getActivity().getPreferences(0);
+        userdb = new UserProfileDB(getActivity().getApplicationContext());
+        tagdb = new TagSQL(getActivity().getApplicationContext());
+        Log.d("TAG+","HOME SCREEN MUST BE SMTHNG "+pref.getString(Constants.UNIQUE_ID,""));
+        id = userdb.getCertainUser(pref.getString(Constants.UNIQUE_ID,""));
+        Log.d("TAG+","CURRENT USER № "+ id);
+        //==========================================MAIN METHODS=============================================================================
+        viewData(id);
+        loadPicture(pref.getString(Constants.UNIQUE_ID,""));
+        //===================================================================================================================================
+
         textAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int position = 0;
                 String itemTag = editTag.getText().toString();
-                list.add(position,"" + itemTag);
+                editTag.setText("");
+                list.add(position,"#" + itemTag);
+                tagdb.insertTag(new MyTag(pref.getString(Constants.UNIQUE_ID,""),itemTag));
                 adapter.notifyItemInserted(position);
 
                 rv.scrollToPosition(position);
@@ -78,38 +91,41 @@ public class Home extends Fragment{
             }
         });
 
-        manager = new LinearLayoutManager(getActivity());
-        rv.setLayoutManager(manager);
-        adapter = new TagsAdapter(getActivity().getApplication(),list);
-        rv.setAdapter(adapter);
-        pref = getActivity().getPreferences(0);
-        db = new UserProfileDB(getActivity().getApplicationContext());
-        Log.d("TAG+","HOME SCREEN MUST BE SMTHNG "+pref.getString(Constants.UNIQUE_ID,""));
-        id = db.getCertainUser(pref.getString(Constants.UNIQUE_ID,""));
-        Log.d("TAG+","CURRENT USER № "+ id);
-        
-        viewData(id);
-        loadPicture(pref.getString(Constants.UNIQUE_ID,""));
-
         return view;
     }
 
     public void viewData (int i) {
-        List<UserDB> users = db.getAllData();
-        Log.d("TAG+","================================================================================================== ");
-        for (UserDB cn : users) {
+        List<User> users = userdb.getAllData();
+        List<MyTag> tags = tagdb.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+
+        Log.d("TAG+","=================================USERS PROFILE INFO================================================= ");
+        for (User u : users) {
 
             String log =
-                    " ID: " + cn.getUser_id() + " " +
-                    ",NAME: " + cn.getName() + " " +
-                    ",LASTNAME: " + cn.getSurname() + " " +
-                    ",AGE: " + cn.getAge() + " " +
-                    ",COUNTRY: " + cn.getCountry() + " " +
-                    ",CITY: " + cn.getCity();
+                    " ID: " + u.getUser_id() + " " +
+                            ",NAME: " + u.getName() + " " +
+                            ",LASTNAME: " + u.getSurname() + " " +
+                            ",AGE: " + u.getAge() + " " +
+                            ",COUNTRY: " + u.getCountry() + " " +
+                            ",CITY: " + u.getCity();
             Log.d("TAG+",log);
 
             name_lastname_age.setText(users.get(i).getName() + " " + users.get(i).getSurname() + ", " + users.get(i).getAge() + " y.o.");
             country_city.setText(users.get(i).getCountry() + ", " + users.get(i).getCity());
+        }
+        Log.d("TAG+","==================================================================================================");
+
+
+
+        Log.d("TAG+","=================================CURRENT USER TAGS INFO================================================= ");
+        if(tags.size() == 0)
+        {
+            Log.d("TAG+","SQLite TagsDB is empty!");
+        }
+        for (MyTag t : tags) {
+
+            list.add(t.getTagname());
+            Log.d("TAG+","Tag :" + t.getTagname());
         }
         Log.d("TAG+","==================================================================================================");
     }

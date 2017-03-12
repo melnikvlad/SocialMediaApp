@@ -2,13 +2,11 @@ package com.example.vlad.scruji.Set_User_Profile_Data.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import com.example.vlad.scruji.Set_User_Profile_Data.Models.UserDB;
+import com.example.vlad.scruji.Set_User_Profile_Data.Models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +56,7 @@ public class UserProfileDB extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
         onCreate(db);
     }
-    public void insertData(UserDB user) {
+    public void insertData(User user) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -74,15 +72,15 @@ public class UserProfileDB extends SQLiteOpenHelper {
 
     }
 
-    public List<UserDB> getAllData() {
-        List<UserDB> contactList = new ArrayList<UserDB>();
+    public List<User> getAllData() {
+        List<User> contactList = new ArrayList<User>();
         String selectQuery = "SELECT  * FROM " + TABLE_NAME;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery,null);
         if (cursor.moveToFirst()) {
             do {
-                UserDB contact = new UserDB();
+                User contact = new User();
                 contact.setUser_id(cursor.getString(1));
                 contact.setName(cursor.getString(2));
                 contact.setSurname(cursor.getString(3));
@@ -109,21 +107,21 @@ public class UserProfileDB extends SQLiteOpenHelper {
 
     public int getCertainUser(String certain_id) {
         Cursor cursor = null;
-        String uID = "";
+        int uID = 0;
         SQLiteDatabase db = this.getReadableDatabase();
         cursor = db.rawQuery("SELECT "+COL_1+" FROM "+TABLE_NAME+" WHERE USER_ID=?", new String[] {certain_id + ""});
         try {
             if(cursor.getCount() > 0) {
                 cursor.moveToFirst();
-                uID = cursor.getString(cursor.getColumnIndex("ID"));
+                uID = cursor.getColumnIndex("ID");
             }
-            return Integer.parseInt(uID)-1;
+            return uID;
         }finally {
             cursor.close();
         }
     }
 
-    public int updateData(UserDB user) {
+    public int updateData(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2,user.getUser_id());

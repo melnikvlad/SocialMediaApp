@@ -1,7 +1,6 @@
 package com.example.vlad.scruji.Set_User_Profile_Data.Fragments;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,9 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Toast;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -26,12 +23,12 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Main_Screen_With_Tabs.Fragments.MainScreenWithTabsFragment;
-import com.example.vlad.scruji.Main_Screen_With_Tabs.Models.HomeModel;
+
 import com.example.vlad.scruji.R;
 import com.example.vlad.scruji.Set_User_Profile_Data.DB.UserProfileDB;
 import com.example.vlad.scruji.Set_User_Profile_Data.Interfaces.SetUserProfileInterface;
 import com.example.vlad.scruji.Set_User_Profile_Data.Models.Request;
-import com.example.vlad.scruji.Set_User_Profile_Data.Models.UserDB;
+import com.example.vlad.scruji.Set_User_Profile_Data.Models.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.ByteArrayOutputStream;
@@ -111,8 +108,8 @@ public class SetUserProfile extends Fragment {
     public void createProfile(String user_id, String name, String lastname, String age,
                               String country, String city) {
 
-        db.insertData(new UserDB(user_id,name,lastname,age,country,city));
-        List<UserDB> users = db.getAllData();
+        db.insertData(new User(user_id,name,lastname,age,country,city));
+        List<User> users = db.getAllData();
         Log.d("TAG+","SETUP SCREEN ID IN LIST "+users.get(users.size()-1).getUser_id());
 
             Gson gson = new GsonBuilder()
