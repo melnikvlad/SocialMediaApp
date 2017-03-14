@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.example.vlad.scruji.Main_Screen_With_Tabs.Models.MyTag;
 import com.example.vlad.scruji.Set_User_Profile_Data.Models.User;
 
 import java.util.ArrayList;
@@ -105,21 +107,27 @@ public class UserProfileDB extends SQLiteOpenHelper {
         return cursor.getCount();
     }
 
-    public int getCertainUser(String certain_id) {
-        Cursor cursor = null;
-        int uID = 0;
-        SQLiteDatabase db = this.getReadableDatabase();
-        cursor = db.rawQuery("SELECT "+COL_1+" FROM "+TABLE_NAME+" WHERE USER_ID=?", new String[] {certain_id + ""});
-        try {
-            if(cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                uID = cursor.getColumnIndex("ID");
-            }
-            return uID;
-        }finally {
-            cursor.close();
+    public List<User> getCertainUser(String certain_id) {
+
+        List<User> userList = new ArrayList<User>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE USER_ID=?", new String[]{certain_id + ""});
+
+        if (cursor.moveToFirst()) {
+            do {
+                User user = new User();
+                user.setUser_id(cursor.getString(1));
+                user.setName(cursor.getString(2));
+                user.setSurname(cursor.getString(3));
+                user.setAge(cursor.getString(4));
+                user.setCountry(cursor.getString(5));
+                user.setCity(cursor.getString(6));
+                userList.add(user);
+            } while (cursor.moveToNext());
         }
+        return userList;
     }
+
 
     public int updateData(User user) {
         SQLiteDatabase db = this.getWritableDatabase();

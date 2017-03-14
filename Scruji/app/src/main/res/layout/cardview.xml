@@ -6,9 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="4dp"
-    card_view:cardMaxElevation="4dp"
-    card_view:cardElevation="2dp"
-    card_view:contentPadding="5dp"
+    android:scaleX="0.97"
+    android:background="@color/cardview_light_background"
+    android:scaleY="0.97"
+    android:layout_marginTop="5dp"
     >
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"

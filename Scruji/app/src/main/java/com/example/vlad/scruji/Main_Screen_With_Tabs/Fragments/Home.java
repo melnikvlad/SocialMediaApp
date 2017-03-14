@@ -68,11 +68,11 @@ public class Home extends Fragment{
         pref = getActivity().getPreferences(0);
         userdb = new UserProfileDB(getActivity().getApplicationContext());
         tagdb = new TagSQL(getActivity().getApplicationContext());
-        Log.d("TAG+","HOME SCREEN MUST BE SMTHNG "+pref.getString(Constants.UNIQUE_ID,""));
-        id = userdb.getCertainUser(pref.getString(Constants.UNIQUE_ID,""));
-        Log.d("TAG+","CURRENT USER № "+ id);
+
+        Log.d("TAG+","- HOME - USER_ID : "+pref.getString(Constants.UNIQUE_ID,""));
+
         //==========================================MAIN METHODS=============================================================================
-        viewData(id);
+        viewData();
         loadPicture(pref.getString(Constants.UNIQUE_ID,""));
         //===================================================================================================================================
 
@@ -80,9 +80,9 @@ public class Home extends Fragment{
             @Override
             public void onClick(View view) {
                 int position = 0;
-                String itemTag = editTag.getText().toString();
+                String itemTag = "#"+editTag.getText().toString();
                 editTag.setText("");
-                list.add(position,"#" + itemTag);
+                list.add(position,"" + itemTag);
                 tagdb.insertTag(new MyTag(pref.getString(Constants.UNIQUE_ID,""),itemTag));
                 adapter.notifyItemInserted(position);
 
@@ -94,9 +94,11 @@ public class Home extends Fragment{
         return view;
     }
 
-    public void viewData (int i) {
+    public void viewData () {
         List<User> users = userdb.getAllData();
+        List<User> user = userdb.getCertainUser(pref.getString(Constants.UNIQUE_ID,""));
         List<MyTag> tags = tagdb.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+
 
         Log.d("TAG+","=================================USERS PROFILE INFO================================================= ");
         for (User u : users) {
@@ -110,8 +112,8 @@ public class Home extends Fragment{
                             ",CITY: " + u.getCity();
             Log.d("TAG+",log);
 
-            name_lastname_age.setText(users.get(i).getName() + " " + users.get(i).getSurname() + ", " + users.get(i).getAge() + " y.o.");
-            country_city.setText(users.get(i).getCountry() + ", " + users.get(i).getCity());
+            name_lastname_age.setText(user.get(0).getName() + " " + user.get(0).getSurname() + ", " + user.get(0).getAge() + " y.o.");
+            country_city.setText(user.get(0).getCountry() + ", " + user.get(0).getCity());
         }
         Log.d("TAG+","==================================================================================================");
 
