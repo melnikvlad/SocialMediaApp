@@ -8,7 +8,7 @@ import retrofit2.http.POST;
 public interface SetUserProfileInterface {
 
  @FormUrlEncoded
-    @POST("scruji_create_profile.php")
+    @POST("create_profile.php")
     Call<String> operation(@Field("user_id")    String user_id,
                            @Field("name")       String name,
                            @Field("surname")    String surname,

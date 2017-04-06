@@ -13,21 +13,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vlad.scruji.Constants.Constants;
+import com.example.vlad.scruji.Interfaces.InsertTagInterface;
+import com.example.vlad.scruji.Interfaces.UserTagsInterface;
 import com.example.vlad.scruji.Models.Tag;
 import com.example.vlad.scruji.Adapters.TagsAdapter;
+import com.example.vlad.scruji.Models.UserTagsResponse;
 import com.example.vlad.scruji.R;
 import com.example.vlad.scruji.SQLite.MyDB;
 import com.example.vlad.scruji.Models.User;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class Home extends Fragment{
@@ -57,17 +72,12 @@ public class Home extends Fragment{
         textAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int position = 0;
                 String itemTag = editTag.getText().toString();
-                editTag.setText("");
-                list.add(position,"#" + itemTag);
-                db.insertTag(new Tag(pref.getString(Constants.UNIQUE_ID,""),"#"+itemTag));
-                adapter.notifyItemInserted(position);
-                rv.scrollToPosition(position);
+                insertTagToMySQLandToSQLite("#" + itemTag);
             }
         });
-
         Log.d("TAG+","- HOME - USER_ID : "+pref.getString(Constants.UNIQUE_ID,""));
+
         viewData();
         loadPicture(pref.getString(Constants.UNIQUE_ID,""));
         return view;
@@ -75,13 +85,7 @@ public class Home extends Fragment{
 
     public void viewData () {
         if(db.getUserTags(pref.getString(Constants.UNIQUE_ID,"")).size() == 0){
-            //make Retrofit call
-            list = new ArrayList<>();
-            manager = new LinearLayoutManager(getActivity());
-            rv.setLayoutManager(manager);
-            adapter = new TagsAdapter(getActivity().getApplication(),list);
-            adapter.notifyDataSetChanged();
-            rv.setAdapter(adapter);
+            loadTagsFromServer();
         }
         else {
             list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
@@ -91,21 +95,77 @@ public class Home extends Fragment{
             adapter.notifyDataSetChanged();
             rv.setAdapter(adapter);
         }
-
             User user = db.getUser(pref.getString(Constants.UNIQUE_ID,""));
             name_lastname_age.setText(user.getName() + " " + user.getSurname() + ", " + user.getAge() + " y.o.");
             country_city.setText(user.getCountry() + ", " + user.getCity());
     }
 
-    public void loadPicture(String user_id) {
+    private void insertTagToMySQLandToSQLite(final String tag){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
 
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        InsertTagInterface service = retrofit.create(InsertTagInterface.class);
+        Call<String> call = service.operation(pref.getString(Constants.UNIQUE_ID,""), tag);
+        call.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Tag tag_new = new Tag(pref.getString(Constants.UNIQUE_ID,""), tag);
+                db.insertTag(tag_new);
+                editTag.setText("");
+                list.add(0,tag);
+                adapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("TAG+","FAILURE:"+ t.getMessage());
+            }
+        });
+    }
+
+    private void loadTagsFromServer(){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        UserTagsInterface service = retrofit.create(UserTagsInterface.class);
+        Call<ArrayList<UserTagsResponse>> call = service.operation(pref.getString(Constants.UNIQUE_ID,""));
+        call.enqueue(new retrofit2.Callback<ArrayList<UserTagsResponse>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserTagsResponse>> call, Response<ArrayList<UserTagsResponse>> response) {
+                ArrayList<UserTagsResponse> mResponse = response.body();
+                for(UserTagsResponse i : mResponse) {
+                    db.insertTag(new Tag(i.getUserId(),i.getTag()));
+                }
+                list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+                manager = new LinearLayoutManager(getActivity());
+                rv.setLayoutManager(manager);
+                adapter = new TagsAdapter(getActivity().getApplication(),list);
+                adapter.notifyDataSetChanged();
+                rv.setAdapter(adapter);
+            }
+            @Override
+            public void onFailure(Call<ArrayList<UserTagsResponse>> call, Throwable t) {}
+        });
+    }
+
+    private void loadPicture(String user_id) {
         Transformation transformation = new RoundedTransformationBuilder()
                 .borderColor(Color.BLACK)
                 .borderWidthDp(3)
                 .cornerRadiusDp(30)
                 .oval(false)
                 .build();
-
         Picasso.with(getActivity().getApplication().getApplicationContext())
                 .load("http://10.0.2.2/server/uploads/main/"+user_id+".png")
                 .placeholder(R.mipmap.ic_launcher)
