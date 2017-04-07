@@ -1,8 +1,10 @@
 package com.example.vlad.scruji.Fragments;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.RequestInterface;
+import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.ServerRequest;
 import com.example.vlad.scruji.Models.ServerResponse;
 import com.example.vlad.scruji.Models.UserRegistrationData;
@@ -45,7 +48,7 @@ public class Login extends Fragment implements View.OnClickListener{
 
     private void initViews(View view){
 
-        pref = getActivity().getPreferences(0);
+        pref = getPreferences();
 
         btn_login = (AppCompatButton)view.findViewById(R.id.btn_login);
         tv_register = (TextView)view.findViewById(R.id.tv_register);
@@ -153,5 +156,14 @@ public class Login extends Fragment implements View.OnClickListener{
         android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_frame,profile);
         ft.commit();
+    }
+    public Context getActivityContex(){
+        Context applicationContext = MainActivity.getContextOfApplication();
+        return applicationContext;
+    }
+
+    public SharedPreferences getPreferences(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
+        return prefs;
     }
 }

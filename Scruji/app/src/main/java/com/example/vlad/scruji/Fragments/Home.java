@@ -1,9 +1,11 @@
 package com.example.vlad.scruji.Fragments;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.InsertTagInterface;
 import com.example.vlad.scruji.Interfaces.UserTagsInterface;
+import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.Tag;
 import com.example.vlad.scruji.Adapters.TagsAdapter;
 import com.example.vlad.scruji.Models.UserTagsResponse;
@@ -45,7 +48,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class Home extends Fragment{
+public class Home extends Fragment  {
     private SharedPreferences pref;
     private CircularImageView roundedImageView;
     private TextView name_lastname_age,country_city,textAdd;
@@ -59,7 +62,7 @@ public class Home extends Fragment{
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        pref = getActivity().getPreferences(0);
+        pref = getPreferences();
         View view = inflater.inflate(R.layout.fragment_tab_home,container,false);
         roundedImageView = (CircularImageView) view.findViewById(R.id.imageView1);
         name_lastname_age = (TextView)view.findViewById(R.id.name_lastname_age);
@@ -67,17 +70,16 @@ public class Home extends Fragment{
         editTag = (EditText)view.findViewById(R.id.editTag);
         textAdd = (TextView)view.findViewById(R.id.textAdd);
         rv = (RecyclerView)view.findViewById(R.id.recycler_view);
-        db = new MyDB(getActivity().getApplicationContext());
+        db = new MyDB(getActivityContex());
 
         textAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String itemTag = editTag.getText().toString();
-                insertTagToMySQLandToSQLite("#" + itemTag);
+                insertTagToMySQLandToSQLite(itemTag);
             }
         });
         Log.d("TAG+","- HOME - USER_ID : "+pref.getString(Constants.UNIQUE_ID,""));
-
         viewData();
         loadPicture(pref.getString(Constants.UNIQUE_ID,""));
         return view;
@@ -88,44 +90,12 @@ public class Home extends Fragment{
             loadTagsFromServer();
         }
         else {
-            list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
-            manager = new LinearLayoutManager(getActivity());
-            rv.setLayoutManager(manager);
-            adapter = new TagsAdapter(getActivity().getApplication(),list);
-            adapter.notifyDataSetChanged();
-            rv.setAdapter(adapter);
+            loadTagsFromSQLite();
         }
-            User user = db.getUser(pref.getString(Constants.UNIQUE_ID,""));
-            name_lastname_age.setText(user.getName() + " " + user.getSurname() + ", " + user.getAge() + " y.o.");
-            country_city.setText(user.getCountry() + ", " + user.getCity());
-    }
 
-    private void insertTagToMySQLandToSQLite(final String tag){
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        InsertTagInterface service = retrofit.create(InsertTagInterface.class);
-        Call<String> call = service.operation(pref.getString(Constants.UNIQUE_ID,""), tag);
-        call.enqueue(new retrofit2.Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Tag tag_new = new Tag(pref.getString(Constants.UNIQUE_ID,""), tag);
-                db.insertTag(tag_new);
-                editTag.setText("");
-                list.add(0,tag);
-                adapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.d("TAG+","FAILURE:"+ t.getMessage());
-            }
-        });
+        User user = db.getUser(pref.getString(Constants.UNIQUE_ID,""));
+        name_lastname_age.setText(user.getName() + " " + user.getSurname() + ", " + user.getAge() + " y.o.");
+        country_city.setText(user.getCountry() + ", " + user.getCity());
     }
 
     private void loadTagsFromServer(){
@@ -143,10 +113,12 @@ public class Home extends Fragment{
         call.enqueue(new retrofit2.Callback<ArrayList<UserTagsResponse>>() {
             @Override
             public void onResponse(Call<ArrayList<UserTagsResponse>> call, Response<ArrayList<UserTagsResponse>> response) {
+                Log.d("TAG+","LOAD FROM SERVER ");
                 ArrayList<UserTagsResponse> mResponse = response.body();
                 for(UserTagsResponse i : mResponse) {
                     db.insertTag(new Tag(i.getUserId(),i.getTag()));
                 }
+
                 list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
                 manager = new LinearLayoutManager(getActivity());
                 rv.setLayoutManager(manager);
@@ -156,6 +128,43 @@ public class Home extends Fragment{
             }
             @Override
             public void onFailure(Call<ArrayList<UserTagsResponse>> call, Throwable t) {}
+        });
+    }
+
+    private void loadTagsFromSQLite(){
+        list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+        manager = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(manager);
+        adapter = new TagsAdapter(getActivity().getApplication(),list);
+        adapter.notifyDataSetChanged();
+        rv.setAdapter(adapter);
+    }
+
+    private void insertTagToMySQLandToSQLite(final String tag){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        InsertTagInterface service = retrofit.create(InsertTagInterface.class);
+        Call<String> call = service.operation(pref.getString(Constants.UNIQUE_ID,""), tag);
+        call.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                int position = 0;
+                Tag tag_new = new Tag(pref.getString(Constants.UNIQUE_ID,""), tag);
+                db.insertTag(tag_new);
+                editTag.setText("");
+                list.add(position,tag);
+                adapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
         });
     }
 
@@ -181,4 +190,14 @@ public class Home extends Fragment{
                     }
                 });
     }
+    public Context getActivityContex(){
+        Context applicationContext = MainActivity.getContextOfApplication();
+        return applicationContext;
+    }
+
+    public SharedPreferences getPreferences(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
+        return prefs;
+    }
+
 }

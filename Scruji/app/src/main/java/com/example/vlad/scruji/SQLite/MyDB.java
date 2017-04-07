@@ -86,9 +86,10 @@ public class MyDB extends SQLiteOpenHelper {
         return list;
     }
 
-    public int deleteUserTag (String user_id) {
+    public void deleteUserTag (String user_id,String tag) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TAGS_TABLE_NAME, "ID = ?",new String[] {user_id});
+        db.delete(TAGS_TABLE_NAME, USER_ID+" = '"+user_id+"' AND "+TAGS+" = '"+tag+"'", null);
+        db.close();
     }
 
     //===================================================== USERS TABLE ==============================================================

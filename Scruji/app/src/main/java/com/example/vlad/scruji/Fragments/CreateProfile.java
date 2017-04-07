@@ -1,9 +1,11 @@
 package com.example.vlad.scruji.Fragments;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.vlad.scruji.Constants.Constants;
+import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.R;
 import com.example.vlad.scruji.SQLite.MyDB;
 import com.example.vlad.scruji.Interfaces.SetUserProfileInterface;
@@ -52,8 +55,8 @@ public class CreateProfile extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        pref = getActivity().getPreferences(0);
-        db = new MyDB(getActivity().getApplicationContext());
+        pref = getPreferences();
+        db = new MyDB(getActivityContex());
 
         View view = inflater.inflate(R.layout.fragment_set_user_info,container,false);
         initViews(view);
@@ -198,5 +201,14 @@ public class CreateProfile extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+    public Context getActivityContex(){
+        Context applicationContext = MainActivity.getContextOfApplication();
+        return applicationContext;
+    }
+
+    public SharedPreferences getPreferences(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
+        return prefs;
     }
 }

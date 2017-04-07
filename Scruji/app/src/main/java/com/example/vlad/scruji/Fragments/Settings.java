@@ -1,9 +1,11 @@
 package com.example.vlad.scruji.Fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.RequestInterface;
+import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.ServerRequest;
 import com.example.vlad.scruji.Models.ServerResponse;
 import com.example.vlad.scruji.Models.UserRegistrationData;
@@ -47,7 +50,7 @@ public class Settings extends Fragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        pref = getActivity().getPreferences(0);
+        pref = getPreferences();
     }
 
     private void initViews(View view){
@@ -166,5 +169,14 @@ public class Settings extends Fragment implements View.OnClickListener {
                 progress.setVisibility(View.GONE);
             }
         });
+    }
+    public Context getActivityContex(){
+        Context applicationContext = MainActivity.getContextOfApplication();
+        return applicationContext;
+    }
+
+    public SharedPreferences getPreferences(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
+        return prefs;
     }
 }

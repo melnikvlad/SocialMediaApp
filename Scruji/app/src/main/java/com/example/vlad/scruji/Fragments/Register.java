@@ -1,6 +1,8 @@
 package com.example.vlad.scruji.Fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.RequestInterface;
+import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.ServerRequest;
 import com.example.vlad.scruji.Models.ServerResponse;
 import com.example.vlad.scruji.Models.UserRegistrationData;
@@ -38,7 +41,7 @@ public class Register extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_register,container,false);
-        pref = getActivity().getPreferences(0);
+        pref = getPreferences();
         initViews(view);
         return view;
     }
@@ -119,5 +122,14 @@ public class Register extends Fragment implements View.OnClickListener{
         android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_frame,login);
         ft.commit();
+    }
+    public Context getActivityContex(){
+        Context applicationContext = MainActivity.getContextOfApplication();
+        return applicationContext;
+    }
+
+    public SharedPreferences getPreferences(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
+        return prefs;
     }
 }

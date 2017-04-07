@@ -1,6 +1,7 @@
 package com.example.vlad.scruji;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -14,13 +15,20 @@ import com.example.vlad.scruji.Fragments.CreateProfile;
 
 public class MainActivity extends FragmentActivity {
     private SharedPreferences pref;
+    public static Context contextOfApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        contextOfApplication = getApplicationContext();
         pref = getPreferences(0);
+
         initFragment();
+    }
+
+    public static Context getContextOfApplication(){
+        return contextOfApplication;
     }
 
     private void initFragment(){
