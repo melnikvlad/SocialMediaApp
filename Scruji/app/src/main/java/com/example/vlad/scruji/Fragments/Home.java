@@ -122,7 +122,7 @@ public class Home extends Fragment  {
                 list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
                 manager = new LinearLayoutManager(getActivity());
                 rv.setLayoutManager(manager);
-                adapter = new TagsAdapter(getActivity().getApplication(),list);
+                adapter = new TagsAdapter(getActivity(),list);
                 adapter.notifyDataSetChanged();
                 rv.setAdapter(adapter);
             }
@@ -135,7 +135,7 @@ public class Home extends Fragment  {
         list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
         manager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(manager);
-        adapter = new TagsAdapter(getActivity().getApplication(),list);
+        adapter = new TagsAdapter(getActivity(),list);
         adapter.notifyDataSetChanged();
         rv.setAdapter(adapter);
     }

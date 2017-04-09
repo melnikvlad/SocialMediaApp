@@ -3,6 +3,8 @@ package com.example.vlad.scruji.Adapters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vlad.scruji.Constants.Constants;
+import com.example.vlad.scruji.Fragments.UsersWithEqualTagsFragment;
 import com.example.vlad.scruji.Interfaces.DeleteTagInterface;
 import com.example.vlad.scruji.Interfaces.InsertTagInterface;
 import com.example.vlad.scruji.MainActivity;
@@ -33,14 +36,14 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
     private Context mContext;
     private List<String> mDataSet;
 
-
-
-    public  class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private SharedPreferences sharedPreferences;
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public SharedPreferences sharedPreferences;
         public TextView pos,tag,del;
+        public CardView cardView;
 
         public ViewHolder(View view) {
             super(view);
+            cardView = (CardView)view.findViewById(R.id.card_view);
             pos = (TextView)view.findViewById(R.id.position);
             tag = (TextView)view.findViewById(R.id.tag);
             del = (TextView)view.findViewById(R.id.delete);
@@ -79,11 +82,9 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     String mResponse = response.body();
-                    Toast.makeText(getActivityContex(),mResponse,Toast.LENGTH_LONG);
                 }
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Toast.makeText(getActivityContex(),t.getMessage(),Toast.LENGTH_LONG);
                 }
             });
         }
@@ -112,10 +113,20 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(TagsAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final TagsAdapter.ViewHolder holder, final int position) {
         holder.pos.setText((position+1)+".");
         holder.tag.setText(mDataSet.get(position).toString());
-        holder.del.setText("Delete");
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences prefs = getPreferences();
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(Constants.TAG_ONCLICK,holder.tag.getText().toString());
+                editor.apply();
+                goToSettingsFragment();
+
+            }
+        });
     }
 
     @Override
@@ -123,4 +134,20 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
         return mDataSet.size();
     }
 
+    private void goToSettingsFragment(){
+        UsersWithEqualTagsFragment fragment = new UsersWithEqualTagsFragment();
+        FragmentManager fragmentManager = ((MainActivity)mContext).getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.home_frame,fragment).commit();
+        fragmentManager.beginTransaction().addToBackStack(null);
+    }
+
+    public Context getActivityContex(){
+        Context applicationContext = MainActivity.getContextOfApplication();
+        return applicationContext;
+    }
+
+    public SharedPreferences getPreferences(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
+        return prefs;
+    }
 }
