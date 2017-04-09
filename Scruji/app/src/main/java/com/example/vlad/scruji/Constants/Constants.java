@@ -19,7 +19,7 @@ public class Constants {
     public static final String EMAIL = "email";
     public static final String UNIQUE_ID = "unique_id";
 
-    public static final String TAG = "Scruji";
+    public static final String TAG = "TAG+";
     public static final int TABS_COUNT = 4;
     public static final int PICK_IMAGE_REQUEST = 1;
 

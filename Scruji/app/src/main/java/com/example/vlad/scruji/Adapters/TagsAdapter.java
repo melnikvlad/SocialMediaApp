@@ -124,7 +124,6 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
                 editor.putString(Constants.TAG_ONCLICK,holder.tag.getText().toString());
                 editor.apply();
                 goToSettingsFragment();
-
             }
         });
     }
