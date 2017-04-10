@@ -57,7 +57,7 @@ public class Home extends Fragment  {
     private RecyclerView rv;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager manager;
-    private List<String> list;
+    private List<String> list = new ArrayList<>();
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -174,7 +174,7 @@ public class Home extends Fragment  {
                 .cornerRadiusDp(30)
                 .oval(false)
                 .build();
-        Picasso.with(getActivity())
+        Picasso.with(getActivityContex())
                 .load(Constants.PICASSO_URL+user_id+".png")
                 .placeholder(R.mipmap.ic_launcher)
                 .transform(transformation)
