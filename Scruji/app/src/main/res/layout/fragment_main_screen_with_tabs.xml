@@ -11,11 +11,12 @@
         android:layout_alignParentBottom="true"
         android:background="@color/tab_background"
         app:tabIndicatorColor="@color/tabDark" />
+
     <android.support.v4.view.ViewPager
         android:id="@+id/main_tab_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_alignParentTop="true"
         android:layout_above="@id/tab_layout"
-        android:background="@android:color/background_dark" />
+        android:layout_alignParentTop="true"
+        android:background="@android:color/white" />
 </RelativeLayout>

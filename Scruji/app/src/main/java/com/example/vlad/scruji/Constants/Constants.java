@@ -5,6 +5,7 @@ package com.example.vlad.scruji.Constants;
 public class Constants {
 
     public static final String BASE_URL = "http://10.0.2.2/server/";
+    public static final String PICASSO_URL ="http://10.0.2.2/server/uploads/main/";
     public static final String REGISTER_OPERATION = "register";
     public static final String LOGIN_OPERATION = "login";
     public static final String CHANGE_PASSWORD_OPERATION = "chgPass";

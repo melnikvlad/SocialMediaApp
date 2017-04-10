@@ -6,98 +6,102 @@
     android:background="@color/cardview_light_background"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#000000">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="wrap_content"
-    android:background="@android:color/background_light"
-
-    android:scaleX="0.97"
-    android:scaleY="0.97">
-    <com.mikhaellopez.circularimageview.CircularImageView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/imageView1"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        app:civ_border_color="#000000"
-        app:civ_border_width="4dp"
-        app:civ_shadow="true"
-        android:layout_marginLeft="100dp"
-        app:civ_shadow_radius="10"
-        app:civ_shadow_color="#111111"/>
-
-    <TextView
         android:layout_width="match_parent"
-        android:id="@+id/name_lastname_age"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:textStyle="normal|bold"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textSize="18sp" />
-    <TextView
-        android:layout_width="match_parent"
-        android:id="@+id/country_city"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textSize="18sp" />
-</LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/add"
-        android:layout_width="389dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="2dp"
-        android:background="@android:color/background_light"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:scaleX="0.97"
-        android:scaleY="0.97">
-
+        android:layout_height="match_parent"
+        android:background="@color/tab_background"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="392dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/background_light"
+            android:orientation="vertical"
 
+            android:scaleX="0.97"
+            android:scaleY="0.97">
 
-            <EditText
-                android:id="@+id/editTag"
-                android:layout_width="253dp"
-                android:layout_height="match_parent"
-                android:visibility="visible" />
+            <com.mikhaellopez.circularimageview.CircularImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageView1"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="100dp"
+                app:civ_border_color="#000000"
+                app:civ_border_width="4dp"
+                app:civ_shadow="true"
+                app:civ_shadow_color="#111111"
+                app:civ_shadow_radius="10" />
 
             <TextView
-                android:id="@+id/textAdd"
-                android:layout_width="122dp"
+                android:id="@+id/name_lastname_age"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Добавить"
                 android:textAlignment="center"
-                android:textColor="@android:color/background_dark"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="normal|bold" />
+
+            <TextView
+                android:id="@+id/country_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
                 android:textSize="18sp" />
         </LinearLayout>
 
-    </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-    android:id="@+id/recycler_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
+        <LinearLayout
+            android:id="@+id/add"
+            android:layout_width="389dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:background="@android:color/background_light"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:scaleX="0.97"
+            android:scaleY="0.97">
+
+
+            <LinearLayout
+                android:layout_width="392dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+
+                <EditText
+                    android:id="@+id/editTag"
+                    android:layout_width="253dp"
+                    android:layout_height="match_parent"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/textAdd"
+                    android:layout_width="122dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Добавить"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/background_dark"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:background="@android:color/transparent"
+            android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
     </LinearLayout>
 
 

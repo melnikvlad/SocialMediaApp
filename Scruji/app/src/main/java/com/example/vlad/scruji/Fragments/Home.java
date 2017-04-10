@@ -54,7 +54,6 @@ public class Home extends Fragment  {
     private TextView name_lastname_age,country_city,textAdd;
     private EditText editTag;
     private MyDB db;
-    private int  id;
     private RecyclerView rv;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager manager;
@@ -175,8 +174,8 @@ public class Home extends Fragment  {
                 .cornerRadiusDp(30)
                 .oval(false)
                 .build();
-        Picasso.with(getActivity().getApplication().getApplicationContext())
-                .load("http://10.0.2.2/server/uploads/main/"+user_id+".png")
+        Picasso.with(getActivity())
+                .load(Constants.PICASSO_URL+user_id+".png")
                 .placeholder(R.mipmap.ic_launcher)
                 .transform(transformation)
                 .into(roundedImageView, new Callback() {
