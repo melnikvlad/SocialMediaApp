@@ -54,7 +54,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Home extends Fragment  {
     private SharedPreferences pref;
     private CircularImageView roundedImageView;
-    private TextView name_lastname_age,country_city,textAdd;
+    private TextView name_lastname_age,country_city,textAdd,photoAdd;
     private EditText editTag;
     private MyDB db;
     private RecyclerView rv,photos_rv;
@@ -71,6 +71,7 @@ public class Home extends Fragment  {
         country_city = (TextView)view.findViewById(R.id.country_city);
         editTag = (EditText)view.findViewById(R.id.editTag);
         textAdd = (TextView)view.findViewById(R.id.textAdd);
+        photoAdd = (TextView)view.findViewById(R.id.add_photo);
         rv = (RecyclerView)view.findViewById(R.id.recycler_view);
         photos_rv = (RecyclerView)view.findViewById(R.id.photos_rv);
         db = new MyDB(getActivityContex());
@@ -80,6 +81,12 @@ public class Home extends Fragment  {
             public void onClick(View view) {
                 String itemTag = editTag.getText().toString();
                 insertTagToMySQLandToSQLite(itemTag);
+            }
+        });
+        photoAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToAddPhoto();
             }
         });
 
@@ -159,8 +166,8 @@ public class Home extends Fragment  {
                 manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                 photos_rv.setLayoutManager(manager);
                 adapter = new OtherPhotosAdapter(getActivity(),mResponse);
-                adapter.notifyDataSetChanged();
                 photos_rv.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
             @Override
             public void onFailure(Call<ArrayList<UserOtherPhoto>> call, Throwable t) {}
@@ -226,6 +233,14 @@ public class Home extends Fragment  {
                     }
                 });
     }
+
+    private void goToAddPhoto(){
+        AddPhoto fragment = new AddPhoto();
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.home_frame,fragment);
+        ft.commit();
+    }
+
     public Context getActivityContex(){
         Context applicationContext = MainActivity.getContextOfApplication();
         return applicationContext;

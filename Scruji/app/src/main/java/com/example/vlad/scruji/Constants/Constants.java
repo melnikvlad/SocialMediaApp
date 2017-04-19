@@ -26,7 +26,9 @@ public class Constants {
     public static final int PICK_IMAGE_REQUEST = 1;
 
     public static final String UPLOAD_URL ="http://10.0.2.2/server/upload.php";
+    public static final String UPLOAD_URL2 ="http://10.0.2.2/server/upload_other_photos.php";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_NAME = "user_id";
+    public static final String KEY_DESCR = "description";
 
 }
