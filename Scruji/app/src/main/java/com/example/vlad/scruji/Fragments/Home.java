@@ -17,12 +17,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.vlad.scruji.Adapters.OtherPhotosAdapter;
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.InsertTagInterface;
+import com.example.vlad.scruji.Interfaces.UserOtherPhotosInterface;
 import com.example.vlad.scruji.Interfaces.UserTagsInterface;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.Tag;
 import com.example.vlad.scruji.Adapters.TagsAdapter;
+import com.example.vlad.scruji.Models.UserOtherPhoto;
 import com.example.vlad.scruji.Models.UserTagsResponse;
 import com.example.vlad.scruji.R;
 import com.example.vlad.scruji.SQLite.MyDB;
@@ -54,7 +57,7 @@ public class Home extends Fragment  {
     private TextView name_lastname_age,country_city,textAdd;
     private EditText editTag;
     private MyDB db;
-    private RecyclerView rv;
+    private RecyclerView rv,photos_rv;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager manager;
     private List<String> list = new ArrayList<>();
@@ -69,6 +72,7 @@ public class Home extends Fragment  {
         editTag = (EditText)view.findViewById(R.id.editTag);
         textAdd = (TextView)view.findViewById(R.id.textAdd);
         rv = (RecyclerView)view.findViewById(R.id.recycler_view);
+        photos_rv = (RecyclerView)view.findViewById(R.id.photos_rv);
         db = new MyDB(getActivityContex());
 
         textAdd.setOnClickListener(new View.OnClickListener() {
@@ -78,9 +82,9 @@ public class Home extends Fragment  {
                 insertTagToMySQLandToSQLite(itemTag);
             }
         });
-        Log.d("TAG+","- HOME - USER_ID : "+pref.getString(Constants.UNIQUE_ID,""));
+
         viewData();
-        loadPicture(pref.getString(Constants.UNIQUE_ID,""));
+
         return view;
     }
 
@@ -91,6 +95,9 @@ public class Home extends Fragment  {
         else {
             loadTagsFromSQLite();
         }
+
+        loadOtherPhotosFromServer();
+        loadPicture(pref.getString(Constants.UNIQUE_ID,""));
 
         User user = db.getUser(pref.getString(Constants.UNIQUE_ID,""));
         name_lastname_age.setText(user.getName() + " " + user.getSurname() + ", " + user.getAge() + " y.o.");
@@ -127,6 +134,36 @@ public class Home extends Fragment  {
             }
             @Override
             public void onFailure(Call<ArrayList<UserTagsResponse>> call, Throwable t) {}
+        });
+    }
+
+    private void loadOtherPhotosFromServer(){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        UserOtherPhotosInterface service = retrofit.create(UserOtherPhotosInterface.class);
+        Call<ArrayList<UserOtherPhoto>> call = service.operation(pref.getString(Constants.UNIQUE_ID,""));
+        call.enqueue(new retrofit2.Callback<ArrayList<UserOtherPhoto>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserOtherPhoto>> call, Response<ArrayList<UserOtherPhoto>> response) {
+
+                ArrayList<UserOtherPhoto> mResponse = response.body();
+
+
+                manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                photos_rv.setLayoutManager(manager);
+                adapter = new OtherPhotosAdapter(getActivity(),mResponse);
+                adapter.notifyDataSetChanged();
+                photos_rv.setAdapter(adapter);
+            }
+            @Override
+            public void onFailure(Call<ArrayList<UserOtherPhoto>> call, Throwable t) {}
         });
     }
 

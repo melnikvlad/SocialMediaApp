@@ -66,7 +66,7 @@ public class MainScreen extends android.support.v4.app.Fragment {
                 case 0:
                     fragment = new Home();
                     return fragment;
-                case 1: fragment = new Filter();
+                case 1: fragment = new Map();
                     return fragment;
                 case 2: fragment = new Settings();
                     return fragment;
