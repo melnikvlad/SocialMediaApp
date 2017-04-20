@@ -18,25 +18,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.vlad.scruji.Adapters.OtherPhotosAdapter;
+
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.AddPhotoInterface;
-import com.example.vlad.scruji.Interfaces.UserOtherPhotosInterface;
+
 import com.example.vlad.scruji.MainActivity;
-import com.example.vlad.scruji.Models.UserOtherPhoto;
+
 import com.example.vlad.scruji.R;
-import com.example.vlad.scruji.SQLite.MyDB;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -48,7 +43,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class AddPhoto extends Fragment {
     private Bitmap bitmap;
-    private Button saveButton;
+    private Button saveButton,backButton;
     private ImageView imageView;
     private SharedPreferences pref;
 
@@ -57,6 +52,7 @@ public class AddPhoto extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_photo,container,false);
         imageView       = (ImageView) view.findViewById(R.id.imageView);
         saveButton      = (Button)  view.findViewById(R.id.btn_save);
+        backButton      = (Button)  view.findViewById(R.id.btn_back);
         showFileChooser();
 
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -65,12 +61,18 @@ public class AddPhoto extends Fragment {
                 uploadImage();
             }
         });
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToProfile();
+            }
+        });
 
         return view;
     }
 
     public void uploadImage(){
-
+        String image = getStringImage(bitmap);
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -81,7 +83,7 @@ public class AddPhoto extends Fragment {
                 .build();
 
         AddPhotoInterface service = retrofit.create(AddPhotoInterface.class);
-        String image = getStringImage(bitmap);
+
         Call<String> call = service.operation(image,pref.getString(Constants.UNIQUE_ID,""),"new");
         call.enqueue(new retrofit2.Callback<String>() {
             @Override
@@ -94,7 +96,7 @@ public class AddPhoto extends Fragment {
             }
         });
     }
-    
+
 
     public String getStringImage(Bitmap bmp){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

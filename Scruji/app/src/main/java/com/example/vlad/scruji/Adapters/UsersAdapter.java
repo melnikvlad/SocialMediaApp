@@ -3,6 +3,7 @@ package com.example.vlad.scruji.Adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +18,18 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     private ArrayList<UsersWithEqualTags> users;
     private Context context;
+    private ArrayList<UsersWithEqualTags> filtered;
 
     public UsersAdapter(Context context,ArrayList<UsersWithEqualTags> users) {
         this.context = context;
         this.users = users;
-
+        this.filtered = new ArrayList<>();
+        this.filtered.addAll(this.users);
     }
 
     @Override
@@ -36,15 +40,15 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        viewHolder.tv_android.setText(users.get(i).getName()+" "+ users.get(i).getLastname()+", "+users.get(i).getAge()+" y.o.");
-        viewHolder.tv2_android.setText(users.get(i).getCountry()+", "+users.get(i).getCity());
+        viewHolder.tv_android.setText(filtered.get(i).getName()+" "+ filtered.get(i).getLastname()+", "+filtered.get(i).getAge()+" y.o.");
+        viewHolder.tv2_android.setText(filtered.get(i).getCountry()+", "+filtered.get(i).getCity());
         Transformation transformation = new RoundedTransformationBuilder()
                 .borderColor(Color.BLACK)
                 .borderWidthDp(1)
                 .cornerRadiusDp(30)
                 .oval(false)
                 .build();
-        Picasso.with(context).load(IconUrl(users.get(i).getId())).transform(transformation).into(viewHolder.img_android);
+        Picasso.with(context).load(IconUrl(filtered.get(i).getId())).transform(transformation).into(viewHolder.img_android);
     }
 
     private String IconUrl(String id) {
@@ -53,7 +57,27 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return users.size();
+        return (null != filtered ? filtered.size() : 0);
+    }
+
+    // Do Search...
+    public void filter(final String text) {
+        filtered.clear();
+
+        // If there is no search value, then add all original list items to filter list
+        if (TextUtils.isEmpty(text)) {
+            filtered.addAll(users);
+        }
+        else {
+            // Iterate in the original List and add it to filter list...
+            for (int i=0;i<users.size();i++) {
+                if (users.get(i).getName().toLowerCase().contains(text.toLowerCase())) {
+                    // Adding Matched items
+                    filtered.add(users.get(i));
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

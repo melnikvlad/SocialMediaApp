@@ -36,67 +36,14 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
     private Context mContext;
     private List<String> mDataSet;
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public SharedPreferences sharedPreferences;
-        public TextView pos,tag,del;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView tag;
         public CardView cardView;
 
         public ViewHolder(View view) {
             super(view);
             cardView = (CardView)view.findViewById(R.id.card_view);
-            pos = (TextView)view.findViewById(R.id.position);
             tag = (TextView)view.findViewById(R.id.tag);
-            del = (TextView)view.findViewById(R.id.delete);
-            del.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            sharedPreferences = getPreferences();
-            MyDB db = new MyDB(getActivityContex());
-
-            deleteItem(getAdapterPosition());
-            db.deleteUserTag(sharedPreferences.getString(Constants.UNIQUE_ID,""),tag.getText().toString());
-            deleteTagFromServer(sharedPreferences.getString(Constants.UNIQUE_ID,""),tag.getText().toString());
-        }
-
-        public void deleteItem(int position) {
-            mDataSet.remove(position);
-            notifyItemRemoved(position);
-            notifyDataSetChanged();
-        }
-
-        private void deleteTagFromServer(final String user_id,final String tag){
-            Gson gson = new GsonBuilder()
-                    .setLenient()
-                    .create();
-
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Constants.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
-
-            DeleteTagInterface service = retrofit.create(DeleteTagInterface.class);
-            Call<String> call = service.operation(sharedPreferences.getString(Constants.UNIQUE_ID,""), tag);
-            call.enqueue(new retrofit2.Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    String mResponse = response.body();
-                }
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                }
-            });
-        }
-
-        public Context getActivityContex(){
-            Context applicationContext = MainActivity.getContextOfApplication();
-            return applicationContext;
-        }
-
-        public SharedPreferences getPreferences(){
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
-            return prefs;
         }
     }
 
@@ -114,7 +61,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final TagsAdapter.ViewHolder holder, final int position) {
-        holder.pos.setText((position+1)+".");
+
         holder.tag.setText(mDataSet.get(position).toString());
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override

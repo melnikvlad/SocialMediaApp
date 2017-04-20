@@ -70,4 +70,6 @@ public class MainActivity extends FragmentActivity {
         ft.replace(R.id.fragment_frame,fragment);
         ft.commit();
     }
+
+
 }

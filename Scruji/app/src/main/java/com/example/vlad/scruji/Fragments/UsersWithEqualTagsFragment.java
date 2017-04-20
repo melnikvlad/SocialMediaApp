@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,8 @@ import com.example.vlad.scruji.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -33,21 +36,42 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class UsersWithEqualTagsFragment extends Fragment{
     private SharedPreferences sharedPreferences;
     private RecyclerView rv;
-    private RecyclerView.Adapter adapter;
+    private UsersAdapter adapter;
     private RecyclerView.LayoutManager manager;
     private Button back;
+    private SearchView searchView;
+    private ArrayList<UsersWithEqualTags> list = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.users_with_equal_tag,container,false);
         back = (Button)view.findViewById(R.id.back_to_home);
         rv = (RecyclerView)view.findViewById(R.id.rv_for_equal_tag);
+        searchView = (SearchView)view.findViewById(R.id.serchview);
         sharedPreferences = getPreferences();
+        adapter = new UsersAdapter(getActivity(),list);
+
+
         getUsers();
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToHomeScreen();
+            }
+        });
+
+        setupSearchView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                adapter.filter(newText);
+                return true;
             }
         });
         return view;
@@ -70,10 +94,10 @@ public class UsersWithEqualTagsFragment extends Fragment{
             public void onResponse(Call<ArrayList<UsersWithEqualTags>> call, Response<ArrayList<UsersWithEqualTags>> response) {
 
                 ArrayList<UsersWithEqualTags> mResponse = response.body();
-
+                list.addAll(mResponse);
                 manager = new LinearLayoutManager(getActivity());
                 rv.setLayoutManager(manager);
-                adapter = new UsersAdapter(getActivity(),mResponse);
+                adapter = new UsersAdapter(getActivity(),list);
                 adapter.notifyDataSetChanged();
                 rv.setAdapter(adapter);
 
@@ -90,6 +114,12 @@ public class UsersWithEqualTagsFragment extends Fragment{
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.users_equal_tag_frame,fragment).commit();
         fragmentManager.beginTransaction().addToBackStack(null);
+    }
+
+    public void setupSearchView() {
+        searchView.setIconifiedByDefault(false);
+        searchView.setSubmitButtonEnabled(false);
+        searchView.setQueryHint("Найти пользователя");
     }
 
     public Context getActivityContex(){

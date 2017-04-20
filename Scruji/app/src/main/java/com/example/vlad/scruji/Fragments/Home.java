@@ -54,8 +54,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Home extends Fragment  {
     private SharedPreferences pref;
     private CircularImageView roundedImageView;
-    private TextView name_lastname_age,country_city,textAdd,photoAdd;
-    private EditText editTag;
+    private TextView name_lastname_age,country_city,myTags,photoAdd;
     private MyDB db;
     private RecyclerView rv,photos_rv;
     private RecyclerView.Adapter adapter;
@@ -65,24 +64,18 @@ public class Home extends Fragment  {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         pref = getPreferences();
-        View view = inflater.inflate(R.layout.fragment_tab_home,container,false);
-        roundedImageView = (CircularImageView) view.findViewById(R.id.imageView1);
-        name_lastname_age = (TextView)view.findViewById(R.id.name_lastname_age);
-        country_city = (TextView)view.findViewById(R.id.country_city);
-        editTag = (EditText)view.findViewById(R.id.editTag);
-        textAdd = (TextView)view.findViewById(R.id.textAdd);
-        photoAdd = (TextView)view.findViewById(R.id.add_photo);
-        rv = (RecyclerView)view.findViewById(R.id.recycler_view);
-        photos_rv = (RecyclerView)view.findViewById(R.id.photos_rv);
         db = new MyDB(getActivityContex());
+        View view = inflater.inflate(R.layout.fragment_tab_home,container,false);
+        roundedImageView    = (CircularImageView) view.findViewById(R.id.imageView1);
+        name_lastname_age   = (TextView)view.findViewById(R.id.name_lastname_age);
+        country_city        = (TextView)view.findViewById(R.id.country_city);
+        myTags              = (TextView) view.findViewById(R.id.my_tags);
+        photoAdd            = (TextView)view.findViewById(R.id.add_photo);
+        rv                  = (RecyclerView)view.findViewById(R.id.recycler_view);
+        photos_rv           = (RecyclerView)view.findViewById(R.id.photos_rv);
 
-        textAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String itemTag = editTag.getText().toString();
-                insertTagToMySQLandToSQLite(itemTag);
-            }
-        });
+        viewData();
+
         photoAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,7 +83,12 @@ public class Home extends Fragment  {
             }
         });
 
-        viewData();
+        myTags.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToMyTags();
+            }
+        });
 
         return view;
     }
@@ -109,39 +107,6 @@ public class Home extends Fragment  {
         User user = db.getUser(pref.getString(Constants.UNIQUE_ID,""));
         name_lastname_age.setText(user.getName() + " " + user.getSurname() + ", " + user.getAge() + " y.o.");
         country_city.setText(user.getCountry() + ", " + user.getCity());
-    }
-
-    private void loadTagsFromServer(){
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        UserTagsInterface service = retrofit.create(UserTagsInterface.class);
-        Call<ArrayList<UserTagsResponse>> call = service.operation(pref.getString(Constants.UNIQUE_ID,""));
-        call.enqueue(new retrofit2.Callback<ArrayList<UserTagsResponse>>() {
-            @Override
-            public void onResponse(Call<ArrayList<UserTagsResponse>> call, Response<ArrayList<UserTagsResponse>> response) {
-                Log.d("TAG+","LOAD FROM SERVER ");
-                ArrayList<UserTagsResponse> mResponse = response.body();
-                for(UserTagsResponse i : mResponse) {
-                    db.insertTag(new Tag(i.getUserId(),i.getTag()));
-                }
-
-                list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
-                manager = new LinearLayoutManager(getActivity());
-                rv.setLayoutManager(manager);
-                adapter = new TagsAdapter(getActivity(),list);
-                adapter.notifyDataSetChanged();
-                rv.setAdapter(adapter);
-            }
-            @Override
-            public void onFailure(Call<ArrayList<UserTagsResponse>> call, Throwable t) {}
-        });
     }
 
     private void loadOtherPhotosFromServer(){
@@ -174,16 +139,7 @@ public class Home extends Fragment  {
         });
     }
 
-    private void loadTagsFromSQLite(){
-        list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
-        manager = new LinearLayoutManager(getActivity());
-        rv.setLayoutManager(manager);
-        adapter = new TagsAdapter(getActivity(),list);
-        adapter.notifyDataSetChanged();
-        rv.setAdapter(adapter);
-    }
-
-    private void insertTagToMySQLandToSQLite(final String tag){
+    private void loadTagsFromServer(){
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -193,22 +149,36 @@ public class Home extends Fragment  {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        InsertTagInterface service = retrofit.create(InsertTagInterface.class);
-        Call<String> call = service.operation(pref.getString(Constants.UNIQUE_ID,""), tag);
-        call.enqueue(new retrofit2.Callback<String>() {
+        UserTagsInterface service = retrofit.create(UserTagsInterface.class);
+        Call<ArrayList<UserTagsResponse>> call = service.operation(pref.getString(Constants.UNIQUE_ID,""));
+        call.enqueue(new retrofit2.Callback<ArrayList<UserTagsResponse>>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                int position = 0;
-                Tag tag_new = new Tag(pref.getString(Constants.UNIQUE_ID,""), tag);
-                db.insertTag(tag_new);
-                editTag.setText("");
-                list.add(position,tag);
+            public void onResponse(Call<ArrayList<UserTagsResponse>> call, Response<ArrayList<UserTagsResponse>> response) {
+                Log.d("TAG+","LOAD FROM SERVER ");
+                ArrayList<UserTagsResponse> mResponse = response.body();
+                for(UserTagsResponse i : mResponse) {
+                    db.insertTag(new Tag(i.getUserId(),i.getTag()));
+                }
+
+                list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+                manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                rv.setLayoutManager(manager);
+                adapter = new TagsAdapter(getActivity(),list);
                 adapter.notifyDataSetChanged();
+                rv.setAdapter(adapter);
             }
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
-            }
+            public void onFailure(Call<ArrayList<UserTagsResponse>> call, Throwable t) {}
         });
+    }
+
+    private void loadTagsFromSQLite(){
+        list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+        manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        rv.setLayoutManager(manager);
+        adapter = new TagsAdapter(getActivity(),list);
+        adapter.notifyDataSetChanged();
+        rv.setAdapter(adapter);
     }
 
     private void loadPicture(String user_id) {
@@ -236,6 +206,13 @@ public class Home extends Fragment  {
 
     private void goToAddPhoto(){
         AddPhoto fragment = new AddPhoto();
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.home_frame,fragment);
+        ft.commit();
+    }
+
+    private void goToMyTags(){
+        MyTags fragment = new MyTags();
         android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.home_frame,fragment);
         ft.commit();
