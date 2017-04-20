@@ -4,8 +4,10 @@ package com.example.vlad.scruji.Constants;
 
 public class Constants {
 
-    public static final String BASE_URL = "http://10.0.2.2/server/";
-    public static final String PICASSO_URL ="http://10.0.2.2/server/uploads/main/";
+    public static final String IP = "10.0.2.2";
+    public static final String BASE_URL = "http://"+IP+"/server/";
+    public static final String PICASSO_URL ="http://"+IP+"/server/uploads/main/";
+    public static final String PICASSO_URL2 ="http://"+IP+"/server/uploads/other/";
 
     public static final String REGISTER_OPERATION = "register";
     public static final String LOGIN_OPERATION = "login";
@@ -25,8 +27,8 @@ public class Constants {
     public static final int TABS_COUNT = 4;
     public static final int PICK_IMAGE_REQUEST = 1;
 
-    public static final String UPLOAD_URL ="http://10.0.2.2/server/upload.php";
-    public static final String UPLOAD_URL2 ="http://10.0.2.2/server/upload_other_photos.php";
+    public static final String UPLOAD_URL ="http://"+IP+"/server/upload.php";
+    public static final String UPLOAD_URL2 ="http://"+IP+"/server/upload_other_photos.php";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_NAME = "user_id";
     public static final String KEY_DESCR = "description";

@@ -65,8 +65,10 @@ public class MyTags extends Fragment {
 
         pref = getPreferences();
         db = new MyDB(getActivityContex());
-        adapter = new TagsVerticalAdapter(getActivity(),list);
 
+        manager = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(manager);
+        rv.setAdapter(adapter);
         viewData();
 
         back.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +81,7 @@ public class MyTags extends Fragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String itemTag = editText.getText().toString();
                 if(!itemTag.equals("")){
                     insertTagToMySQLandToSQLite(itemTag);
@@ -225,12 +228,16 @@ public class MyTags extends Fragment {
         call.enqueue(new retrofit2.Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                int position = 0;
+
                 Tag tag_new = new Tag(pref.getString(Constants.UNIQUE_ID,""), tag);
                 db.insertTag(tag_new);
                 editText.setText("");
-                list.add(position,tag);
+                list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+                manager = new LinearLayoutManager(getActivity());
+                rv.setLayoutManager(manager);
+                adapter = new TagsVerticalAdapter(getActivity(),list);
                 adapter.notifyDataSetChanged();
+                rv.setAdapter(adapter);
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
