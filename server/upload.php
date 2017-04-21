@@ -3,7 +3,7 @@
  if($_SERVER['REQUEST_METHOD']=='POST'){
 
  $user_id 	= $_POST['user_id'];
- $image = $_POST['image'];
+ $image 	= $_POST['image'];
 
  
  require_once('init.php');

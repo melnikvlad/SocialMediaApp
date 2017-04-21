@@ -4,7 +4,7 @@ package com.example.vlad.scruji.Constants;
 
 public class Constants {
 
-    public static final String IP = "10.0.2.2";
+    public static final String IP = "10.0.3.2";
     public static final String BASE_URL = "http://"+IP+"/server/";
     public static final String PICASSO_URL ="http://"+IP+"/server/uploads/main/";
     public static final String PICASSO_URL2 ="http://"+IP+"/server/uploads/other/";
@@ -31,6 +31,8 @@ public class Constants {
     public static final String UPLOAD_URL2 ="http://"+IP+"/server/upload_other_photos.php";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_NAME = "user_id";
-    public static final String KEY_DESCR = "description";
+    public static final int RADIUS = 400;
+
+
 
 }
