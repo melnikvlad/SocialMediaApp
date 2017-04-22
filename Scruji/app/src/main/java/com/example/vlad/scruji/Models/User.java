@@ -21,7 +21,7 @@ public class User {
         this.city = city;
     }
 
-    public String getAge() {
+        public String getAge() {
             return age;
         }
 
@@ -32,7 +32,6 @@ public class User {
         public String getCountry() {
             return country;
         }
-
 
         public String getName() {
             return name;
