@@ -13,23 +13,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vlad.scruji.Adapters.OtherPhotosAdapter;
+import com.example.vlad.scruji.Adapters.TagsAdapter;
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Interfaces.InsertTagInterface;
 import com.example.vlad.scruji.Interfaces.UserOtherPhotosInterface;
 import com.example.vlad.scruji.Interfaces.UserTagsInterface;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.Tag;
-import com.example.vlad.scruji.Adapters.TagsAdapter;
+import com.example.vlad.scruji.Models.User;
 import com.example.vlad.scruji.Models.UserOtherPhoto;
 import com.example.vlad.scruji.Models.UserTagsResponse;
 import com.example.vlad.scruji.R;
 import com.example.vlad.scruji.SQLite.MyDB;
-import com.example.vlad.scruji.Models.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
@@ -37,10 +34,6 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;

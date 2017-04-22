@@ -8,18 +8,17 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.vlad.scruji.Models.PicassoMarker;
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.UpdateLocationInterface;
 import com.example.vlad.scruji.Interfaces.getMarkersInterface;
@@ -44,6 +43,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.maps.android.SphericalUtil;
+import com.makeramen.roundedimageview.RoundedTransformationBuilder;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,18 +67,14 @@ public class Map extends Fragment implements
     private GoogleMap mGoogleMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private Marker marker;
-    private Marker otherMarker;
+    private Marker me;
+    private Marker user;
+    private PicassoMarker picassoMarker;
     private Circle circle;
     private SharedPreferences pref;
     private List<Marker> markers = new ArrayList<>();
-    private List<LatLng> markersList = new ArrayList<>();
     private ArrayList<Markers> markerResponse = new ArrayList<>();
-    final Handler h = new Handler();
-    final int delay = 30000;
-
-
-
+    
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab_filter, container, false);
         mMapView = (MapView) view.findViewById(R.id.mapView);
@@ -103,10 +101,9 @@ public class Map extends Fragment implements
         }
         else {
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-                if(marker != null){
-                    marker.remove();
+                if(me != null){
+                    me.remove();
                     circle.remove();
-
                 }
 
                 circle = mGoogleMap.addCircle(new CircleOptions()
@@ -115,42 +112,18 @@ public class Map extends Fragment implements
                     .strokeColor(Color.rgb(0, 136, 255))
                     .fillColor(Color.argb(20, 0, 136, 255)));
 
-                marker = mGoogleMap.addMarker(new MarkerOptions()
+                me = mGoogleMap.addMarker(new MarkerOptions()
                         .position(mLocation)
-                        .flat(false)
-                        .title("Это я:)"));
+                        .flat(false));
 
-//
-            getMarkersList(mLocation);
+                viewMarkers(mLocation);
 
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,14);
                 mGoogleMap.moveCamera(cameraUpdate);
         }
     }
-
-    private void drawMarkers(LatLng latLng, List<LatLng> positions,double range) {
-        int i = 0;
-
-                if (otherMarker != null) {
-                    otherMarker.remove();
-                }
-        for (LatLng position : positions) {
-            otherMarker = mGoogleMap.addMarker(new MarkerOptions()
-                            .position(position)
-                            .visible(false)
-                            .title(String.valueOf(i)));
-            markers.add(otherMarker);
-            i++;
-        }
-
-        for (Marker marker : markers) {
-            if (SphericalUtil.computeDistanceBetween(latLng, marker.getPosition()) < range) {
-                marker.setVisible(true);
-            }
-        }
-    }
-
-    private void getMarkersList(final LatLng mPos){
+    
+    private void viewMarkers(final LatLng mPos){
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -166,16 +139,48 @@ public class Map extends Fragment implements
             @Override
             public void onResponse(Call<ArrayList<Markers>> call, Response<ArrayList<Markers>> response) {
                 markerResponse = response.body();
-                for(Markers m : markerResponse){
-                    markersList.add(new LatLng(Double.valueOf(m.getLatitude()),Double.valueOf(m.getLongtitude())));
-                }
-                drawMarkers(mPos,markersList,Constants.RADIUS);
+
+                drawMarkers(mPos,markerResponse,Constants.RADIUS);
             }
             @Override
             public void onFailure(Call<ArrayList<Markers>> call, Throwable t) {
-                Log.d(Constants.TAG,"Markers error:"+ t.getMessage());
             }
         });
+    }
+    
+    private void drawMarkers(LatLng latLng, List<Markers> response,double range) {
+        for (Markers m : response) {
+            
+            user = mGoogleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(Double.valueOf(m.getLatitude()),Double.valueOf(m.getLongtitude())))
+                .visible(false));
+
+            if(!m.getUserId().equals(pref.getString(Constants.UNIQUE_ID,""))) {
+                picassoMarker = new PicassoMarker(user);
+                Transformation transformation = new RoundedTransformationBuilder()
+                        .borderColor(Color.BLACK)
+                        .borderWidthDp(1)
+                        .cornerRadiusDp(100)
+                        .oval(false)
+                        .build();
+
+                Picasso.with(getActivity())
+                        .load(Constants.PICASSO_URL + m.getUserId() + ".png")
+                        .transform(transformation)
+                        .resize(150, 150)
+                        .into(picassoMarker);
+
+                markers.add(user);
+            }
+        }
+        for (Marker marker : markers) {
+            if (SphericalUtil.computeDistanceBetween(latLng, marker.getPosition()) < range) {
+                marker.setVisible(true);
+            }
+            else{
+                marker.setVisible(false);
+            }
+        }
     }
 
     private void updateUserLocation(String user_id,String latitude,String longtitude){
@@ -211,6 +216,7 @@ public class Map extends Fragment implements
                 .addOnConnectionFailedListener(this)
                 .build();
         mGoogleApiClient.connect();
+
     }
 
      private void getPermissionsToViewMyLocation(GoogleMap googleMap) {
