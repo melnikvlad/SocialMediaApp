@@ -21,4 +21,4 @@
 
  - ###  Основной экран
 `Fragments/MainScreen`
-![Home.java](C:\Users\Vlad\AndroidStudioProjects\SocialMediaApp\Readme\main.png)
+![Home.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/main.png)
