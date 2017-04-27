@@ -1,5 +1,4 @@
-<snippet>
-  <content><![CDATA[
+
 # Разработка приложения социальной сети для системы Android, с возможностью тематического поиска.
 
 ### О приложении:
@@ -22,7 +21,4 @@
 
  - ###  Основной экран
 `Fragments/MainScreen`
-![Image of Yaktocat](C:\Users\Vlad\AndroidStudioProjects\SocialMediaApp\Readme\main.png)
-]]></content>
-  <tabTrigger>readme</tabTrigger>
-</snippet>
+![Home.java](C:\Users\Vlad\AndroidStudioProjects\SocialMediaApp\Readme\main.png)
