@@ -16,17 +16,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.vlad.scruji.Adapters.TagsAdapter;
 import com.example.vlad.scruji.Adapters.UsersAdapter;
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Interfaces.getUsersWithEqualTagsInterface;
+import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.UsersWithEqualTags;
 import com.example.vlad.scruji.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -45,12 +44,12 @@ public class UsersWithEqualTagsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.users_with_equal_tag,container,false);
+
         back = (Button)view.findViewById(R.id.back_to_home);
         rv = (RecyclerView)view.findViewById(R.id.rv_for_equal_tag);
         searchView = (SearchView)view.findViewById(R.id.serchview);
         sharedPreferences = getPreferences();
         adapter = new UsersAdapter(getActivity(),list);
-
 
         getUsers();
 
@@ -69,7 +68,6 @@ public class UsersWithEqualTagsFragment extends Fragment{
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-
                 adapter.filter(newText);
                 return true;
             }
@@ -87,8 +85,8 @@ public class UsersWithEqualTagsFragment extends Fragment{
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        getUsersWithEqualTagsInterface service = retrofit.create(getUsersWithEqualTagsInterface.class);
-        Call<ArrayList<UsersWithEqualTags>> call = service.operation(sharedPreferences.getString(Constants.TAG_ONCLICK,""));
+        Service service = retrofit.create(Service.class);
+        Call<ArrayList<UsersWithEqualTags>> call = service.users_with_equal_tag(sharedPreferences.getString(Constants.TAG_ONCLICK,""));
         call.enqueue(new retrofit2.Callback<ArrayList<UsersWithEqualTags>>() {
             @Override
             public void onResponse(Call<ArrayList<UsersWithEqualTags>> call, Response<ArrayList<UsersWithEqualTags>> response) {
@@ -123,12 +121,10 @@ public class UsersWithEqualTagsFragment extends Fragment{
     }
 
     public Context getActivityContex(){
-    Context applicationContext = MainActivity.getContextOfApplication();
-    return applicationContext;
+        return MainActivity.getContextOfApplication();
     }
 
     public SharedPreferences getPreferences(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
-        return prefs;
+        return PreferenceManager.getDefaultSharedPreferences(getActivityContex());
     }
 }

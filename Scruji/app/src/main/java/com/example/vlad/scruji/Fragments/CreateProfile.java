@@ -23,10 +23,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.vlad.scruji.Constants.Constants;
+import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.R;
 import com.example.vlad.scruji.SQLite.MyDB;
-import com.example.vlad.scruji.Interfaces.SetUserProfileInterface;
 import com.example.vlad.scruji.Models.Request;
 import com.example.vlad.scruji.Models.User;
 import com.google.gson.Gson;
@@ -112,7 +112,7 @@ public class CreateProfile extends Fragment {
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
 
-            SetUserProfileInterface service = retrofit.create(SetUserProfileInterface.class);
+
                     Request request = new Request();
                     request.setUser_id(users.getUser_id());
                     request.setName(users.getName());
@@ -121,7 +121,8 @@ public class CreateProfile extends Fragment {
                     request.setCountry(users.getCountry());
                     request.setCity(users.getCity());
 
-                Call<String> call = service.operation(
+                Service service = retrofit.create(Service.class);
+                Call<String> call = service.create_profile(
                         request.getUser_id(),
                         request.getName(),
                         request.getSurname(),
@@ -129,14 +130,15 @@ public class CreateProfile extends Fragment {
                         request.getCountry(),
                         request.getCity());
 
+
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        Log.d("TAG+","OKEY RESPONSE : "+ response.body().toString());
+                        Log.d("TAG+","OKEY RESPONSE : "+ response.body());
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        Log.d("TAG+","ERROR RESPONSE : "+ t.getMessage().toString());
+                        Log.d("TAG+","ERROR RESPONSE : "+ t.getMessage());
                     }
                 });
             goToProfile();

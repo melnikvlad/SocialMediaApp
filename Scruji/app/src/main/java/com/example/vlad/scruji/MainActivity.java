@@ -42,7 +42,8 @@ public class MainActivity extends FragmentActivity {
         int isAvailiable = api.isGooglePlayServicesAvailable(this);
         if(isAvailiable == ConnectionResult.SUCCESS){
             return true;
-        }else if(api.isUserResolvableError(isAvailiable)){
+        }
+        else if(api.isUserResolvableError(isAvailiable)){
             Dialog dialog = api.getErrorDialog(this,isAvailiable,0);
             dialog.show();
         }

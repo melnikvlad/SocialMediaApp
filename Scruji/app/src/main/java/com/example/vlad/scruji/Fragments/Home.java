@@ -18,8 +18,7 @@ import android.widget.TextView;
 import com.example.vlad.scruji.Adapters.OtherPhotosAdapter;
 import com.example.vlad.scruji.Adapters.TagsAdapter;
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Interfaces.UserOtherPhotosInterface;
-import com.example.vlad.scruji.Interfaces.UserTagsInterface;
+import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.Tag;
 import com.example.vlad.scruji.Models.User;
@@ -58,6 +57,7 @@ public class Home extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         pref = getPreferences();
         db = new MyDB(getActivityContex());
+
         View view = inflater.inflate(R.layout.fragment_tab_home,container,false);
         roundedImageView    = (CircularImageView) view.findViewById(R.id.imageView1);
         name_lastname_age   = (TextView)view.findViewById(R.id.name_lastname_age);
@@ -112,14 +112,13 @@ public class Home extends Fragment  {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        UserOtherPhotosInterface service = retrofit.create(UserOtherPhotosInterface.class);
-        Call<ArrayList<UserOtherPhoto>> call = service.operation(pref.getString(Constants.UNIQUE_ID,""));
+        Service service = retrofit.create(Service.class);
+        Call<ArrayList<UserOtherPhoto>> call = service.get_other_photos(pref.getString(Constants.UNIQUE_ID,""));
         call.enqueue(new retrofit2.Callback<ArrayList<UserOtherPhoto>>() {
             @Override
             public void onResponse(Call<ArrayList<UserOtherPhoto>> call, Response<ArrayList<UserOtherPhoto>> response) {
 
                 ArrayList<UserOtherPhoto> mResponse = response.body();
-
 
                 manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                 photos_rv.setLayoutManager(manager);
@@ -142,18 +141,20 @@ public class Home extends Fragment  {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        UserTagsInterface service = retrofit.create(UserTagsInterface.class);
-        Call<ArrayList<UserTagsResponse>> call = service.operation(pref.getString(Constants.UNIQUE_ID,""));
+        Service service = retrofit.create(Service.class);
+        Call<ArrayList<UserTagsResponse>> call = service.get_user_tags(pref.getString(Constants.UNIQUE_ID,""));
         call.enqueue(new retrofit2.Callback<ArrayList<UserTagsResponse>>() {
             @Override
             public void onResponse(Call<ArrayList<UserTagsResponse>> call, Response<ArrayList<UserTagsResponse>> response) {
-                Log.d("TAG+","LOAD FROM SERVER ");
+
                 ArrayList<UserTagsResponse> mResponse = response.body();
+
                 for(UserTagsResponse i : mResponse) {
                     db.insertTag(new Tag(i.getUserId(),i.getTag()));
                 }
 
                 list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+
                 manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
                 rv.setLayoutManager(manager);
                 adapter = new TagsAdapter(getActivity(),list);
@@ -212,13 +213,11 @@ public class Home extends Fragment  {
     }
 
     public Context getActivityContex(){
-        Context applicationContext = MainActivity.getContextOfApplication();
-        return applicationContext;
+        return MainActivity.getContextOfApplication();
     }
 
     public SharedPreferences getPreferences(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
-        return prefs;
+        return PreferenceManager.getDefaultSharedPreferences(getActivityContex());
     }
 
 }

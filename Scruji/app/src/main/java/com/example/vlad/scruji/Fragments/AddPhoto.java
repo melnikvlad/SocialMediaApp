@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,20 +17,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Interfaces.AddPhotoInterface;
-
+import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
-
 import com.example.vlad.scruji.R;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -73,6 +67,7 @@ public class AddPhoto extends Fragment {
 
     public void uploadImage(){
         String image = getStringImage(bitmap);
+
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -82,9 +77,9 @@ public class AddPhoto extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        AddPhotoInterface service = retrofit.create(AddPhotoInterface.class);
+        Service service = retrofit.create(Service.class);
 
-        Call<String> call = service.operation(image,pref.getString(Constants.UNIQUE_ID,""),"new");
+        Call<String> call = service.upload_other_photos(image,pref.getString(Constants.UNIQUE_ID,""),"new");
         call.enqueue(new retrofit2.Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -92,7 +87,7 @@ public class AddPhoto extends Fragment {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("TAG+","Error "+ t.getMessage().toString());
+                Log.d("TAG+","Error "+ t.getMessage());
             }
         });
     }
@@ -102,8 +97,7 @@ public class AddPhoto extends Fragment {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] imageBytes = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        return encodedImage;
+        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
 
     private void showFileChooser() {
@@ -135,12 +129,10 @@ public class AddPhoto extends Fragment {
     }
 
     public Context getActivityContex(){
-        Context applicationContext = MainActivity.getContextOfApplication();
-        return applicationContext;
+        return MainActivity.getContextOfApplication();
     }
 
     public SharedPreferences getPreferences(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
-        return prefs;
+        return PreferenceManager.getDefaultSharedPreferences(getActivityContex());
     }
 }

@@ -18,6 +18,7 @@ import com.example.vlad.scruji.R;
 public class MainScreen extends android.support.v4.app.Fragment {
     ViewPager viewPager;
     TabLayout tabLayout;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,7 +35,6 @@ public class MainScreen extends android.support.v4.app.Fragment {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -50,8 +50,6 @@ public class MainScreen extends android.support.v4.app.Fragment {
         });
         return view;
     }
-
-
 
     class ViewPagerAdapter extends FragmentStatePagerAdapter {
         Context context;

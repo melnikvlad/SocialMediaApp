@@ -1,0 +1,28 @@
+<snippet>
+  <content><![CDATA[
+# Разработка приложения социальной сети для системы Android, с возможностью тематического поиска.
+
+### О приложении:
+  - Логин и регистрация 
+  - Создание профиля с загрузкой аватарки из "Галереи"
+  - Добавление "тэгов" и поиск совпадений по тэгу среди всех зарегестрированных пользователей
+  - Возможность просмотра расположения пользователей с идентичными тегами на картах Google Maps
+  - Чат между пользователями (в процессе разработки)
+  
+### Ключевые термины:
+  - Java
+  - PHP
+  - MySQL, SQLite, Firebase
+  - Retrofit 2
+  - Picasso
+  - Google Maps API
+  - ViewPager, RecyclerView, Fragments
+  
+### Подробнее:
+
+ - ###  Основной экран
+`Fragments/MainScreen`
+![Image of Yaktocat](C:\Users\Vlad\AndroidStudioProjects\SocialMediaApp\Readme\main.png)
+]]></content>
+  <tabTrigger>readme</tabTrigger>
+</snippet>

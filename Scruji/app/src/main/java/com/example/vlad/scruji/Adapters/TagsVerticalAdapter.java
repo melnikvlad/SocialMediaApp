@@ -36,14 +36,13 @@ public class TagsVerticalAdapter extends RecyclerView.Adapter<TagsVerticalAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(mContext).inflate(R.layout.cardview_for_vertical_rv_tags,parent,false);
-        TagsVerticalAdapter.ViewHolder viewHolder = new TagsVerticalAdapter.ViewHolder(v);
-        return viewHolder;
+        return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
-        holder.tag.setText(filtered.get(position).toString());
+        holder.tag.setText(filtered.get(position));
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

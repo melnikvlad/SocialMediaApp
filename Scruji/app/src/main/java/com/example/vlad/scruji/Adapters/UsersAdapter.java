@@ -18,7 +18,6 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     private ArrayList<UsersWithEqualTags> users;
@@ -30,6 +29,17 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         this.users = users;
         this.filtered = new ArrayList<>();
         this.filtered.addAll(this.users);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        TextView tv_android,tv2_android;
+        ImageView img_android;
+        public ViewHolder(View view) {
+            super(view);
+            tv_android = (TextView)view.findViewById(R.id.tv_android);
+            tv2_android = (TextView)view.findViewById(R.id.tv2_android);
+            img_android = (ImageView)view.findViewById(R.id.img_android);
+        }
     }
 
     @Override
@@ -78,16 +88,5 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             }
         }
         notifyDataSetChanged();
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView tv_android,tv2_android;
-        ImageView img_android;
-        public ViewHolder(View view) {
-            super(view);
-            tv_android = (TextView)view.findViewById(R.id.tv_android);
-            tv2_android = (TextView)view.findViewById(R.id.tv2_android);
-            img_android = (ImageView)view.findViewById(R.id.img_android);
-        }
     }
 }

@@ -18,12 +18,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Interfaces.RequestInterface;
+import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.ServerRequest;
 import com.example.vlad.scruji.Models.ServerResponse;
 import com.example.vlad.scruji.Models.UserRegistrationData;
 import com.example.vlad.scruji.R;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -42,7 +43,6 @@ public class Settings extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_tab_settings,container,false);
         initViews(view);
         return view;
@@ -138,8 +138,6 @@ public class Settings extends Fragment implements View.OnClickListener {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        RequestInterface requestInterface = retrofit.create(RequestInterface.class);
-
         UserRegistrationData user = new UserRegistrationData();
         user.setEmail(email);
         user.setOld_password(old_password);
@@ -147,9 +145,11 @@ public class Settings extends Fragment implements View.OnClickListener {
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.CHANGE_PASSWORD_OPERATION);
         request.setUser(user);
-        Call<ServerResponse> response = requestInterface.operation(request);
 
-        response.enqueue(new Callback<ServerResponse>() {
+        Service service = retrofit.create(Service.class);
+        Call<ServerResponse> call = service.index(request);
+
+        call.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, retrofit2.Response<ServerResponse> response) {
                 ServerResponse resp = response.body();
@@ -165,18 +165,15 @@ public class Settings extends Fragment implements View.OnClickListener {
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-                Log.d(Constants.TAG,"failed");
                 progress.setVisibility(View.GONE);
             }
         });
     }
     public Context getActivityContex(){
-        Context applicationContext = MainActivity.getContextOfApplication();
-        return applicationContext;
+        return MainActivity.getContextOfApplication();
     }
 
     public SharedPreferences getPreferences(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
-        return prefs;
+        return PreferenceManager.getDefaultSharedPreferences(getActivityContex());
     }
 }

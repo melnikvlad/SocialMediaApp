@@ -2,12 +2,11 @@ package com.example.vlad.scruji.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Interfaces.RequestInterface;
+import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.ServerRequest;
 import com.example.vlad.scruji.Models.ServerResponse;
@@ -86,7 +85,7 @@ public class Register extends Fragment implements View.OnClickListener{
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        RequestInterface requestInterface = retrofit.create(RequestInterface.class);
+
 
         UserRegistrationData user = new UserRegistrationData();
         user.setName(name);
@@ -97,19 +96,18 @@ public class Register extends Fragment implements View.OnClickListener{
         request.setOperation(Constants.REGISTER_OPERATION);
         request.setUser(user);
 
-        Call<ServerResponse> response = requestInterface.operation(request);
+        Service service = retrofit.create(Service.class);
+        Call<ServerResponse> call = service.index(request);
 
-        response.enqueue(new Callback<ServerResponse>() {
+        call.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, retrofit2.Response<ServerResponse> response) {
-                ServerResponse resp = response.body();
                 progress.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
                 progress.setVisibility(View.INVISIBLE);
-                Log.d(Constants.TAG,"failed");
             }
         });
     }
@@ -124,12 +122,10 @@ public class Register extends Fragment implements View.OnClickListener{
         ft.commit();
     }
     public Context getActivityContex(){
-        Context applicationContext = MainActivity.getContextOfApplication();
-        return applicationContext;
+        return MainActivity.getContextOfApplication();
     }
 
     public SharedPreferences getPreferences(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
-        return prefs;
+        return PreferenceManager.getDefaultSharedPreferences(getActivityContex());
     }
 }

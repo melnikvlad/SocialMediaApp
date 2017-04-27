@@ -17,7 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Interfaces.RequestInterface;
+import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.ServerRequest;
 import com.example.vlad.scruji.Models.ServerResponse;
@@ -40,14 +40,14 @@ public class Login extends Fragment implements View.OnClickListener{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_login,container,false);
+
         initViews(view);
+
         return view;
     }
 
     private void initViews(View view){
-
         pref = getPreferences();
 
         btn_login = (AppCompatButton)view.findViewById(R.id.btn_login);
@@ -73,8 +73,8 @@ public class Login extends Fragment implements View.OnClickListener{
                 String password = et_password.getText().toString();
 
                 if (!email.isEmpty() && !password.isEmpty()) {
-
                     progress.setVisibility(View.VISIBLE);
+
                     loginProcess(email, password);
 
                     break;
@@ -88,16 +88,15 @@ public class Login extends Fragment implements View.OnClickListener{
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        RequestInterface requestInterface = retrofit.create(RequestInterface.class);
-
         UserRegistrationData user = new UserRegistrationData();
         user.setEmail(email);
         user.setPassword(password);
         ServerRequest request = new ServerRequest();
         request.setOperation(Constants.LOGIN_OPERATION);
         request.setUser(user);
-        Call<ServerResponse> response = requestInterface.operation(request);
 
+        Service requestInterface = retrofit.create(Service.class);
+        Call<ServerResponse> response = requestInterface.index(request);
         response.enqueue(new Callback<ServerResponse>() {
             @Override
             public void onResponse(Call<ServerResponse> call, retrofit2.Response<ServerResponse> response) {
@@ -119,11 +118,9 @@ public class Login extends Fragment implements View.OnClickListener{
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-
                 progress.setVisibility(View.INVISIBLE);
                 Log.d(Constants.TAG,"failed");
                 Snackbar.make(getView(), t.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
-
             }
         });
     }

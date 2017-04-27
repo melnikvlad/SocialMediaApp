@@ -18,12 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.vlad.scruji.Models.PicassoMarker;
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Interfaces.UpdateLocationInterface;
-import com.example.vlad.scruji.Interfaces.getMarkersInterface;
+import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.Markers;
+import com.example.vlad.scruji.Models.PicassoMarker;
 import com.example.vlad.scruji.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -77,6 +76,7 @@ public class Map extends Fragment implements
     
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab_filter, container, false);
+
         mMapView = (MapView) view.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
@@ -133,14 +133,15 @@ public class Map extends Fragment implements
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        getMarkersInterface service = retrofit.create(getMarkersInterface.class);
-        Call<ArrayList<Markers>> call = service.operation();
+        Service service = retrofit.create(Service.class);
+        Call<ArrayList<Markers>> call = service.get_all_markers();
         call.enqueue(new retrofit2.Callback<ArrayList<Markers>>() {
             @Override
             public void onResponse(Call<ArrayList<Markers>> call, Response<ArrayList<Markers>> response) {
-                markerResponse = response.body();
 
+                markerResponse = response.body();
                 drawMarkers(mPos,markerResponse,Constants.RADIUS);
+
             }
             @Override
             public void onFailure(Call<ArrayList<Markers>> call, Throwable t) {
@@ -193,8 +194,8 @@ public class Map extends Fragment implements
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        UpdateLocationInterface service = retrofit.create(UpdateLocationInterface.class);
-        Call<String> call = service.operation(user_id,latitude,longtitude);
+        Service service = retrofit.create(Service.class);
+        Call<String> call = service.save_user_location(user_id,latitude,longtitude);
         call.enqueue(new retrofit2.Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -233,13 +234,11 @@ public class Map extends Fragment implements
      }
 
     public Context getActivityContex(){
-        Context applicationContext = MainActivity.getContextOfApplication();
-        return applicationContext;
+        return MainActivity.getContextOfApplication();
     }
 
     public SharedPreferences getPreferences(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
-        return prefs;
+        return PreferenceManager.getDefaultSharedPreferences(getActivityContex());
     }
 
     @Override

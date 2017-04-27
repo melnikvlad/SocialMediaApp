@@ -13,19 +13,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.vlad.scruji.Adapters.TagsAdapter;
 import com.example.vlad.scruji.Adapters.TagsVerticalAdapter;
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Interfaces.DeleteTagInterface;
-import com.example.vlad.scruji.Interfaces.InsertTagInterface;
-import com.example.vlad.scruji.Interfaces.UserTagsInterface;
+import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.Models.Tag;
 import com.example.vlad.scruji.Models.UserTagsResponse;
@@ -159,17 +155,19 @@ public class MyTags extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        UserTagsInterface service = retrofit.create(UserTagsInterface.class);
-        Call<ArrayList<UserTagsResponse>> call = service.operation(pref.getString(Constants.UNIQUE_ID,""));
+        Service service = retrofit.create(Service.class);
+        Call<ArrayList<UserTagsResponse>> call = service.get_user_tags(pref.getString(Constants.UNIQUE_ID,""));
         call.enqueue(new retrofit2.Callback<ArrayList<UserTagsResponse>>() {
             @Override
             public void onResponse(Call<ArrayList<UserTagsResponse>> call, Response<ArrayList<UserTagsResponse>> response) {
                 ArrayList<UserTagsResponse> mResponse = response.body();
+
                 for(UserTagsResponse i : mResponse) {
                     db.insertTag(new Tag(i.getUserId(),i.getTag()));
                 }
 
                 list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+
                 manager = new LinearLayoutManager(getActivity());
                 rv.setLayoutManager(manager);
                 adapter = new TagsVerticalAdapter(getActivity(),list);
@@ -191,12 +189,11 @@ public class MyTags extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        DeleteTagInterface service = retrofit.create(DeleteTagInterface.class);
-        Call<String> call = service.operation(pref.getString(Constants.UNIQUE_ID,""), tag);
+        Service service = retrofit.create(Service.class);
+        Call<String> call = service.delete_user_tag(pref.getString(Constants.UNIQUE_ID,""), tag);
         call.enqueue(new retrofit2.Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                String mResponse = response.body();
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -206,6 +203,7 @@ public class MyTags extends Fragment {
 
     private void loadTagsFromSQLite(){
         list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+
         manager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(manager);
         adapter = new TagsVerticalAdapter(getActivity(),list);
@@ -223,8 +221,8 @@ public class MyTags extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        InsertTagInterface service = retrofit.create(InsertTagInterface.class);
-        Call<String> call = service.operation(pref.getString(Constants.UNIQUE_ID,""), tag);
+        Service service = retrofit.create(Service.class);
+        Call<String> call = service.insert_tag(pref.getString(Constants.UNIQUE_ID,""), tag);
         call.enqueue(new retrofit2.Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -233,6 +231,7 @@ public class MyTags extends Fragment {
                 db.insertTag(tag_new);
                 editText.setText("");
                 list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+
                 manager = new LinearLayoutManager(getActivity());
                 rv.setLayoutManager(manager);
                 adapter = new TagsVerticalAdapter(getActivity(),list);
@@ -259,12 +258,10 @@ public class MyTags extends Fragment {
     }
 
     public Context getActivityContex(){
-        Context applicationContext = MainActivity.getContextOfApplication();
-        return applicationContext;
+        return MainActivity.getContextOfApplication();
     }
 
     public SharedPreferences getPreferences(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
-        return prefs;
+        return PreferenceManager.getDefaultSharedPreferences(getActivityContex());
     }
 }

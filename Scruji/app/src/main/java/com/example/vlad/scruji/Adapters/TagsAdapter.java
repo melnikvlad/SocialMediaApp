@@ -6,30 +6,17 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Fragments.UsersWithEqualTagsFragment;
-import com.example.vlad.scruji.Interfaces.DeleteTagInterface;
-import com.example.vlad.scruji.Interfaces.InsertTagInterface;
 import com.example.vlad.scruji.MainActivity;
-import com.example.vlad.scruji.Models.Tag;
 import com.example.vlad.scruji.R;
-import com.example.vlad.scruji.SQLite.MyDB;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
@@ -55,14 +42,13 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
     @Override
     public TagsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(mContext).inflate(R.layout.cardview,parent,false);
-        ViewHolder viewHolder = new ViewHolder(v);
-        return viewHolder;
+        return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(final TagsAdapter.ViewHolder holder, final int position) {
 
-        holder.tag.setText(mDataSet.get(position).toString());
+        holder.tag.setText(mDataSet.get(position));
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,12 +74,10 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
     }
 
     public Context getActivityContex(){
-        Context applicationContext = MainActivity.getContextOfApplication();
-        return applicationContext;
+        return MainActivity.getContextOfApplication();
     }
 
     public SharedPreferences getPreferences(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
-        return prefs;
+        return PreferenceManager.getDefaultSharedPreferences(getActivityContex());
     }
 }
