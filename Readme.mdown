@@ -30,7 +30,7 @@
   
 ### Подробнее:
 
-- ###  Логин, регисрация, создание профиля
+- ###  Логин, регистрация, создание профиля
 
 ![Login.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/login.png)
 

@@ -54,7 +54,7 @@ public class OtherPhotosAdapter extends RecyclerView.Adapter<OtherPhotosAdapter.
     private String PhotoUrl(String name) {
         SharedPreferences pref;
         pref = getPreferences();
-        return Constants.PICASSO_URL2+pref.getString(Constants.UNIQUE_ID,"")+"/"+name+".png";
+        return Constants.PICASSO_OTHER +pref.getString(Constants.UNIQUE_ID,"")+"/"+name+".png";
     }
     public Context getActivityContex(){
         return MainActivity.getContextOfApplication();

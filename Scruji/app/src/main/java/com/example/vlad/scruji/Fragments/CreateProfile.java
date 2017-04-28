@@ -98,8 +98,8 @@ public class CreateProfile extends Fragment {
     }
     //============================================CREATE PROFILE================================================================
     public void createProfile(String user_id, String name, String lastname, String age, String country, String city) {
-       User users = new User();
-        db.insertUser(new User(user_id,name,lastname,age,country,city));
+            User users = new User();
+            db.insertUser(new User(user_id,name,lastname,age,country,city));
             users = db.getUser(user_id);
             Log.d("TAG+","- SETUP - ID IN LIST "+ users.getUser_id());
 

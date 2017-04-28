@@ -62,7 +62,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     }
 
     private String IconUrl(String id) {
-        return Constants.PICASSO_URL+id+".png";
+        return Constants.PICASSO_MAIN +id+".png";
     }
 
     @Override

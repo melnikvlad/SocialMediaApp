@@ -16,10 +16,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.vlad.scruji.Adapters.OtherPhotosAdapter;
+import com.example.vlad.scruji.Adapters.PostsAdapter;
 import com.example.vlad.scruji.Adapters.TagsAdapter;
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
+import com.example.vlad.scruji.Models.Post;
 import com.example.vlad.scruji.Models.Tag;
 import com.example.vlad.scruji.Models.User;
 import com.example.vlad.scruji.Models.UserOtherPhoto;
@@ -48,11 +50,10 @@ public class Home extends Fragment  {
     private CircularImageView roundedImageView;
     private TextView name_lastname_age,country_city,myTags,photoAdd;
     private MyDB db;
-    private RecyclerView rv,photos_rv;
+    private RecyclerView rv,photos_rv,posts_rv;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager manager;
     private List<String> list = new ArrayList<>();
-
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         pref = getPreferences();
@@ -66,6 +67,7 @@ public class Home extends Fragment  {
         photoAdd            = (TextView)view.findViewById(R.id.add_photo);
         rv                  = (RecyclerView)view.findViewById(R.id.recycler_view);
         photos_rv           = (RecyclerView)view.findViewById(R.id.photos_rv);
+        posts_rv           = (RecyclerView)view.findViewById(R.id.posts_rv);
 
         viewData();
 
@@ -94,6 +96,7 @@ public class Home extends Fragment  {
             loadTagsFromSQLite();
         }
 
+        loadPostsFromServer();
         loadOtherPhotosFromServer();
         loadPicture(pref.getString(Constants.UNIQUE_ID,""));
 
@@ -166,8 +169,48 @@ public class Home extends Fragment  {
         });
     }
 
+    private void loadPostsFromServer(){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Service service = retrofit.create(Service.class);
+        Call<ArrayList<Post>> call = service.get_user_posts(pref.getString(Constants.UNIQUE_ID,""));
+        call.enqueue(new retrofit2.Callback<ArrayList<Post>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
+
+                ArrayList<Post> mResponse = response.body();
+
+                for(Post i : mResponse) {
+                    db.insertPost(new Post(i.getUserId(),i.getDate(),i.getDescription(),i.getPhoto()));
+                }
+
+                manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                posts_rv.setLayoutManager(manager);
+
+                adapter = new PostsAdapter(
+                        getActivity(),
+                        mResponse,
+                        "Melnikov Vlad"
+                        //db.getUser(pref.getString(Constants.UNIQUE_ID,"")).getSurname()+" "+db.getUser(pref.getString(Constants.UNIQUE_ID,"")).getName()
+                );
+                adapter.notifyDataSetChanged();
+                posts_rv.setAdapter(adapter);
+            }
+            @Override
+            public void onFailure(Call<ArrayList<Post>> call, Throwable t) {}
+        });
+    }
+
     private void loadTagsFromSQLite(){
         list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+
         manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rv.setLayoutManager(manager);
         adapter = new TagsAdapter(getActivity(),list);
@@ -183,7 +226,7 @@ public class Home extends Fragment  {
                 .oval(false)
                 .build();
         Picasso.with(getActivityContex())
-                .load(Constants.PICASSO_URL+user_id+".png")
+                .load(Constants.PICASSO_MAIN +user_id+".png")
                 .placeholder(R.mipmap.ic_launcher)
                 .transform(transformation)
                 .into(roundedImageView, new Callback() {

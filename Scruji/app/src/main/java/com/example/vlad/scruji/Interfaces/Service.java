@@ -1,6 +1,7 @@
 package com.example.vlad.scruji.Interfaces;
 
 import com.example.vlad.scruji.Models.Markers;
+import com.example.vlad.scruji.Models.Post;
 import com.example.vlad.scruji.Models.ServerRequest;
 import com.example.vlad.scruji.Models.ServerResponse;
 import com.example.vlad.scruji.Models.UserOtherPhoto;
@@ -47,6 +48,15 @@ public interface Service {
             @Field("tag")        String tag
     );
 
+    @FormUrlEncoded
+    @POST("insert_post.php")
+    Call<String> insert_post(
+            @Field("user_id")    String user_id,
+            @Field("date")       String date,
+            @Field("description")String description,
+            @Field("photo")      String photo
+    );
+
     @POST("index.php")
     Call<ServerResponse> index(@Body ServerRequest request);
 
@@ -78,6 +88,12 @@ public interface Service {
     @FormUrlEncoded
     @POST("get_user_tags.php")
     Call<ArrayList<UserTagsResponse>> get_user_tags(
+            @Field("user_id") String user_id
+    );
+
+    @FormUrlEncoded
+    @POST("get_user_posts.php")
+    Call<ArrayList<Post>> get_user_posts(
             @Field("user_id") String user_id
     );
 }

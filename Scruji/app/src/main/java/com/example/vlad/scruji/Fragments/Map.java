@@ -166,7 +166,7 @@ public class Map extends Fragment implements
                         .build();
 
                 Picasso.with(getActivity())
-                        .load(Constants.PICASSO_URL + m.getUserId() + ".png")
+                        .load(Constants.PICASSO_MAIN + m.getUserId() + ".png")
                         .transform(transformation)
                         .resize(150, 150)
                         .into(picassoMarker);
