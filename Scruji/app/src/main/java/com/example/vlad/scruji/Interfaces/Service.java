@@ -26,6 +26,14 @@ public interface Service {
     );
 
     @FormUrlEncoded
+    @POST("upload_post_photo.php")
+    Call<String> upload_post_photo(
+            @Field("image")       String image,
+            @Field("user_id")     String user_id,
+            @Field("description") String description
+    );
+
+    @FormUrlEncoded
     @POST("delete_user_tag.php")
     Call<String> delete_user_tag(
             @Field("user_id")    String user_id,

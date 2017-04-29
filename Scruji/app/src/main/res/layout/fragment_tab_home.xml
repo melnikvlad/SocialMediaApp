@@ -68,13 +68,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="Добавить фото:"
-
+                android:text="Мои фото:"
                 android:textAllCaps="false"
                 android:textColor="@android:color/background_dark"
                 android:textSize="16sp" />
-        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/more_photos"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/more"
+            android:foregroundGravity="right" />
+        </LinearLayout>
+    </LinearLayout>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/photos_rv"
             android:layout_width="match_parent"
@@ -94,10 +106,24 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:text="Мои тэги:"
-
                 android:textAllCaps="false"
                 android:textColor="@android:color/background_dark"
                 android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/more_tags"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/more"
+                    android:foregroundGravity="right" />
+            </LinearLayout>
         </LinearLayout>
 
 
@@ -123,10 +149,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:text="Мои записи:"
-
                 android:textAllCaps="false"
                 android:textColor="@android:color/background_dark"
                 android:textSize="16sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/more_posts"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/more"
+                    android:foregroundGravity="right" />
+            </LinearLayout>
         </LinearLayout>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/posts_rv"

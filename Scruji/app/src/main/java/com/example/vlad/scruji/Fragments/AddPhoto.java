@@ -26,6 +26,7 @@ import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -67,6 +68,7 @@ public class AddPhoto extends Fragment {
 
     public void uploadImage(){
         String image = getStringImage(bitmap);
+        String date = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
 
         Gson gson = new GsonBuilder()
                 .setLenient()
@@ -79,7 +81,7 @@ public class AddPhoto extends Fragment {
 
         Service service = retrofit.create(Service.class);
 
-        Call<String> call = service.upload_other_photos(image,pref.getString(Constants.UNIQUE_ID,""),"new");
+        Call<String> call = service.upload_other_photos(image,pref.getString(Constants.UNIQUE_ID,""),date);
         call.enqueue(new retrofit2.Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

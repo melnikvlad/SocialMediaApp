@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vlad.scruji.Adapters.OtherPhotosAdapter;
@@ -49,6 +50,7 @@ public class Home extends Fragment  {
     private SharedPreferences pref;
     private CircularImageView roundedImageView;
     private TextView name_lastname_age,country_city,myTags,photoAdd;
+    private ImageView m_photos,m_tags,m_posts;
     private MyDB db;
     private RecyclerView rv,photos_rv,posts_rv;
     private RecyclerView.Adapter adapter;
@@ -63,30 +65,41 @@ public class Home extends Fragment  {
         roundedImageView    = (CircularImageView) view.findViewById(R.id.imageView1);
         name_lastname_age   = (TextView)view.findViewById(R.id.name_lastname_age);
         country_city        = (TextView)view.findViewById(R.id.country_city);
-        myTags              = (TextView) view.findViewById(R.id.my_tags);
-        photoAdd            = (TextView)view.findViewById(R.id.add_photo);
+        m_photos            = (ImageView)view.findViewById(R.id.more_photos);
+        m_tags              = (ImageView)view.findViewById(R.id.more_tags);
+        m_posts             = (ImageView)view.findViewById(R.id.more_posts);
         rv                  = (RecyclerView)view.findViewById(R.id.recycler_view);
         photos_rv           = (RecyclerView)view.findViewById(R.id.photos_rv);
         posts_rv           = (RecyclerView)view.findViewById(R.id.posts_rv);
 
         viewData();
 
-        photoAdd.setOnClickListener(new View.OnClickListener() {
+
+
+        m_photos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToAddPhoto();
             }
         });
 
-        myTags.setOnClickListener(new View.OnClickListener() {
+        m_tags.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToMyTags();
             }
         });
 
+        m_posts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToAddPost();
+            }
+        });
+
         return view;
     }
+
 
     public void viewData () {
         if(db.getUserTags(pref.getString(Constants.UNIQUE_ID,"")).size() == 0){
@@ -187,18 +200,14 @@ public class Home extends Fragment  {
 
                 ArrayList<Post> mResponse = response.body();
 
-                for(Post i : mResponse) {
-                    db.insertPost(new Post(i.getUserId(),i.getDate(),i.getDescription(),i.getPhoto()));
-                }
-
                 manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
                 posts_rv.setLayoutManager(manager);
 
                 adapter = new PostsAdapter(
                         getActivity(),
                         mResponse,
-                        "Melnikov Vlad"
-                        //db.getUser(pref.getString(Constants.UNIQUE_ID,"")).getSurname()+" "+db.getUser(pref.getString(Constants.UNIQUE_ID,"")).getName()
+                        db.getUser(pref.getString(Constants.UNIQUE_ID,"")).getSurname()+" "+
+                        db.getUser(pref.getString(Constants.UNIQUE_ID,"")).getName()
                 );
                 adapter.notifyDataSetChanged();
                 posts_rv.setAdapter(adapter);
@@ -248,8 +257,15 @@ public class Home extends Fragment  {
         ft.commit();
     }
 
+    private void goToAddPost() {
+        AddPost fragment = new AddPost();
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.home_frame,fragment);
+        ft.commit();
+    }
+
     private void goToMyTags(){
-        MyTags fragment = new MyTags();
+        AddTags fragment = new AddTags();
         android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.home_frame,fragment);
         ft.commit();

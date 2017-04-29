@@ -38,7 +38,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MyTags extends Fragment {
+public class AddTags extends Fragment {
     private TextView back,add;
     private EditText editText;
     private SharedPreferences pref;

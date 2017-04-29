@@ -26,12 +26,12 @@ import java.util.List;
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
     private Context mContext;
     private List<Post> mDataSet;
-    private String user;
+    private String username;
 
     public PostsAdapter(Context mContext, List<Post> mDataSet,String user) {
         this.mContext = mContext;
         this.mDataSet = mDataSet;
-        this.user = user;
+        this.username = user;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -70,16 +70,17 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 .load(IconUrl(mDataSet.get(position).getUserId()))
                 .transform(transformation)
                 .into(holder.user_icon);
-        holder.user.setText(user);
+
+        holder.user.setText(username);
         holder.date.setText(mDataSet.get(position).getDate());
         holder.description.setText(mDataSet.get(position).getDescription());
-        if(mDataSet.get(position).getPhoto().equals("")){
+
+        if(mDataSet.get(position).getPhoto() == ""){
             holder.photo.setVisibility(View.GONE);
         }
         else{
             Picasso.with(mContext)
-                    .load("http://10.0.2.2/server/uploads/posts/59023ebbdc5270.35580984/59023ebbdc5270.35580984_1.png")
-                    //.load(PhotoPost(mDataSet.get(position).getPhoto()))
+                    .load(PhotoPost(mDataSet.get(position).getPhoto()))
                     .into(holder.photo);
         }
     }
@@ -96,7 +97,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
     private String PhotoPost(String name) {
         SharedPreferences pref;
         pref = getPreferences();
-        return Constants.PICASSO_POSTS +pref.getString(Constants.UNIQUE_ID,"")+"/"+name+".png";
+        String res = Constants.PICASSO_POSTS+pref.getString(Constants.UNIQUE_ID,"")+"/"+name+".png";
+        return res;
     }
 
     public Context getActivityContex(){
