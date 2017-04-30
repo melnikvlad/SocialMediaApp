@@ -20,7 +20,7 @@ import com.example.vlad.scruji.Adapters.UsersAdapter;
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
-import com.example.vlad.scruji.Models.UsersWithEqualTags;
+import com.example.vlad.scruji.Models.UserResponse;
 import com.example.vlad.scruji.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -39,7 +39,7 @@ public class UsersWithEqualTagsFragment extends Fragment{
     private RecyclerView.LayoutManager manager;
     private Button back;
     private SearchView searchView;
-    private ArrayList<UsersWithEqualTags> list = new ArrayList<>();
+    private ArrayList<UserResponse> list = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -86,12 +86,12 @@ public class UsersWithEqualTagsFragment extends Fragment{
                 .build();
 
         Service service = retrofit.create(Service.class);
-        Call<ArrayList<UsersWithEqualTags>> call = service.users_with_equal_tag(sharedPreferences.getString(Constants.TAG_ONCLICK,""));
-        call.enqueue(new retrofit2.Callback<ArrayList<UsersWithEqualTags>>() {
+        Call<ArrayList<UserResponse>> call = service.users_with_equal_tag(sharedPreferences.getString(Constants.TAG_ONCLICK,""));
+        call.enqueue(new retrofit2.Callback<ArrayList<UserResponse>>() {
             @Override
-            public void onResponse(Call<ArrayList<UsersWithEqualTags>> call, Response<ArrayList<UsersWithEqualTags>> response) {
+            public void onResponse(Call<ArrayList<UserResponse>> call, Response<ArrayList<UserResponse>> response) {
 
-                ArrayList<UsersWithEqualTags> mResponse = response.body();
+                ArrayList<UserResponse> mResponse = response.body();
                 list.addAll(mResponse);
                 manager = new LinearLayoutManager(getActivity());
                 rv.setLayoutManager(manager);
@@ -101,7 +101,7 @@ public class UsersWithEqualTagsFragment extends Fragment{
 
             }
             @Override
-            public void onFailure(Call<ArrayList<UsersWithEqualTags>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<UserResponse>> call, Throwable t) {
                 Log.d(Constants.TAG,"FAILURE " +t.getMessage());
             }
         });

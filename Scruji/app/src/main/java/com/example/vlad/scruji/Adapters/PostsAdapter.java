@@ -35,10 +35,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView user,date,description;
+         TextView user,date,description;
         CircularImageView user_icon;
         ImageView photo;
-        public CardView cardView;
+        CardView cardView;
 
         public ViewHolder(View view) {
             super(view);
@@ -90,16 +90,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         return mDataSet.size();
     }
 
+    private String PhotoPost(String name) {
+        return Constants.PICASSO_POSTS+name+".png";
+    }
+
     private String IconUrl(String id) {
         return Constants.PICASSO_MAIN +id+".png";
     }
 
-    private String PhotoPost(String name) {
-        SharedPreferences pref;
-        pref = getPreferences();
-        String res = Constants.PICASSO_POSTS+pref.getString(Constants.UNIQUE_ID,"")+"/"+name+".png";
-        return res;
-    }
+
 
     public Context getActivityContex(){
         return MainActivity.getContextOfApplication();

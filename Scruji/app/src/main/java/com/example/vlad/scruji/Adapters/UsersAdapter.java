@@ -1,7 +1,11 @@
 package com.example.vlad.scruji.Adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Models.UsersWithEqualTags;
+import com.example.vlad.scruji.Fragments.OtherUserProfile;
+import com.example.vlad.scruji.MainActivity;
+import com.example.vlad.scruji.Models.UserResponse;
 import com.example.vlad.scruji.R;
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Picasso;
@@ -20,11 +26,11 @@ import com.squareup.picasso.Transformation;
 import java.util.ArrayList;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
-    private ArrayList<UsersWithEqualTags> users;
+    private ArrayList<UserResponse> users;
     private Context context;
-    private ArrayList<UsersWithEqualTags> filtered;
+    private ArrayList<UserResponse> filtered;
 
-    public UsersAdapter(Context context,ArrayList<UsersWithEqualTags> users) {
+    public UsersAdapter(Context context,ArrayList<UserResponse> users) {
         this.context = context;
         this.users = users;
         this.filtered = new ArrayList<>();
@@ -34,8 +40,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView tv_android,tv2_android;
         ImageView img_android;
+        CardView cardView;
         public ViewHolder(View view) {
             super(view);
+            cardView = (CardView)view.findViewById(R.id.card_for_list_of_users);
             tv_android = (TextView)view.findViewById(R.id.tv_android);
             tv2_android = (TextView)view.findViewById(R.id.tv2_android);
             img_android = (ImageView)view.findViewById(R.id.img_android);
@@ -49,7 +57,17 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
+        viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences prefs = getPreferences();
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(Constants.TEMP_ID,filtered.get(i).getId());
+                editor.apply();
+                goToOtherUserProfile();
+            }
+        });
         viewHolder.tv_android.setText(filtered.get(i).getName()+" "+ filtered.get(i).getLastname()+", "+filtered.get(i).getAge()+" y.o.");
         viewHolder.tv2_android.setText(filtered.get(i).getCountry()+", "+filtered.get(i).getCity());
         Transformation transformation = new RoundedTransformationBuilder()
@@ -88,5 +106,20 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             }
         }
         notifyDataSetChanged();
+    }
+
+    public Context getActivityContex(){
+        return MainActivity.getContextOfApplication();
+    }
+
+    public SharedPreferences getPreferences(){
+        return PreferenceManager.getDefaultSharedPreferences(getActivityContex());
+    }
+
+    private void goToOtherUserProfile() {
+        OtherUserProfile fragment = new OtherUserProfile();
+        FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.home_frame, fragment).commit();
+        fragmentManager.beginTransaction().addToBackStack(null);
     }
 }

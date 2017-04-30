@@ -69,7 +69,7 @@ public class AddPost extends Fragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm");
+                DateFormat df = new SimpleDateFormat("EEE,d MMM yyyy HH mm");
                 String desc = post_description.getText().toString();
                 String date = df.format(Calendar.getInstance().getTime());
                 uploadImage(date);

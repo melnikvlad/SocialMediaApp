@@ -23,6 +23,7 @@ public class Constants {
     public static final String NAME = "name";
     public static final String EMAIL = "email";
     public static final String UNIQUE_ID = "unique_id";
+    public static final String TEMP_ID = "temp_id";
 
     public static final String TAG = "TAG+";
     public static final int TABS_COUNT = 4;
