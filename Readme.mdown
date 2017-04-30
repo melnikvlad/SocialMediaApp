@@ -56,6 +56,7 @@
 При нажатии на тэг на главном экране, осуществляется вывод всех зарегистрированных пользователей с идентичным тэгом в своем профиле (В дальнейшем любое нажатие на карточку другого пользователя приведет на его профиль, где будут открыты функции добавления в друзья  и прочее)
 
 ![UsersWithEqualTagsFragment.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/by_tag.png)
+![UsersWithEqualTagsFragment.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/other_user_page.png)
 
 - ###  Карты
 
