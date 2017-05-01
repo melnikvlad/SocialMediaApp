@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vlad.scruji.Adapters.OtherPhotosAdapter;
 import com.example.vlad.scruji.Adapters.PostsAdapter;
@@ -82,6 +83,18 @@ public class OtherUserProfile extends Fragment{
                 goToUsersWithSameTag();
             }
         });
+        friendship.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(friendship.getText().toString() == "Добавить в друзья")  {
+                    addToFriends(pref.getString(Constants.UNIQUE_ID,""),pref.getString(Constants.TEMP_ID,""));
+                }
+                else{
+                    Toast.makeText(getActivityContex(),"Уже ваш друг",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         viewData();
 
         return view;
@@ -134,6 +147,30 @@ public class OtherUserProfile extends Fragment{
             }
             @Override
             public void onFailure(Call<ArrayList<CheckResponse>> call, Throwable t) {}
+        });
+    }
+
+    private void addToFriends(String user_id,String other_user_id) {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Service service = retrofit.create(Service.class);
+        Call<String> call = service.insert_friend(user_id,other_user_id);
+        call.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                    friendship.setText("У вас в друзьях");
+                    friendship.setTextColor(Color.WHITE);
+                    box.setBackgroundColor(Color.rgb(9,239,93));
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {}
         });
     }
 

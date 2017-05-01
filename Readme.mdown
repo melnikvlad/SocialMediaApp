@@ -64,7 +64,6 @@
 Если пользователь не в этой области, то его иконка(аватарка) не будет отображена.
 
 ![Map.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/in_circle.png)
-
 ![Map.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/out_of_circle.png)
 
 - ###  Опции
@@ -72,7 +71,6 @@
 Возможность смены пароля и выхода из своего аккаунта.
 
 ![Settings.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/settings.png)
-
 ![Settings.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/change_pswd.png)
 
 

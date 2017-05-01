@@ -73,6 +73,13 @@ public interface Service {
             @Field("photo")      String photo
     );
 
+    @FormUrlEncoded
+    @POST("insert_friend.php")
+    Call<String> insert_friend(
+            @Field("user_id")    String user_id,
+            @Field("other_user_id") String other_user_id
+    );
+
     @POST("index.php")
     Call<ServerResponse> index(@Body ServerRequest request);
 

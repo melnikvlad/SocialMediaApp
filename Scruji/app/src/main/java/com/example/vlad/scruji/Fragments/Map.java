@@ -26,6 +26,7 @@ import com.example.vlad.scruji.Models.PicassoMarker;
 import com.example.vlad.scruji.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -34,11 +35,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.maps.android.SphericalUtil;
@@ -59,9 +62,11 @@ public class Map extends Fragment implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        com.google.android.gms.location.LocationListener {
+        LocationListener {
 
     private static final int REQUEST_FINE_LOCATION = 1001;
+    private static final double EARTH_RADIOUS = 3958.75; // Earth radius;
+    private static final int METER_CONVERSION = 1609;
     private MapView mMapView;
     private GoogleMap mGoogleMap;
     private GoogleApiClient mGoogleApiClient;
@@ -86,6 +91,7 @@ public class Map extends Fragment implements
             e.printStackTrace();
         }
         mMapView.getMapAsync(this);
+
         pref = getPreferences();
 
         return view;
@@ -108,7 +114,7 @@ public class Map extends Fragment implements
 
                 circle = mGoogleMap.addCircle(new CircleOptions()
                     .center(mLocation)
-                    .radius(Constants.RADIUS)
+                    .radius(Constants.RANGE)
                     .strokeColor(Color.rgb(0, 136, 255))
                     .fillColor(Color.argb(20, 0, 136, 255)));
 
@@ -120,6 +126,22 @@ public class Map extends Fragment implements
 
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,14);
                 mGoogleMap.moveCamera(cameraUpdate);
+
+                mGoogleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+                    @Override
+                    public void onCameraIdle() {
+                        // Listener of zooming;
+                        CameraPosition cameraPosition = mGoogleMap.getCameraPosition();
+                        float zoomLevel = cameraPosition.zoom;
+                        VisibleRegion visibleRegion = mGoogleMap.getProjection().getVisibleRegion();
+                        LatLng nearLeft = visibleRegion.nearLeft;
+                        LatLng nearRight = visibleRegion.nearRight;
+                        LatLng farLeft = visibleRegion.farLeft;
+                        LatLng farRight = visibleRegion.farRight;
+                        double dist_w = distanceFrom(nearLeft.latitude, nearLeft.longitude, nearRight.latitude, nearRight.longitude);
+                        double dist_h = distanceFrom(farLeft.latitude, farLeft.longitude, farRight.latitude, farRight.longitude);
+                    }
+                });
         }
     }
     
@@ -140,7 +162,7 @@ public class Map extends Fragment implements
             public void onResponse(Call<ArrayList<Markers>> call, Response<ArrayList<Markers>> response) {
 
                 markerResponse = response.body();
-                drawMarkers(mPos,markerResponse,Constants.RADIUS);
+                drawMarkers(mPos,markerResponse,Constants.RANGE);
 
             }
             @Override
@@ -153,8 +175,8 @@ public class Map extends Fragment implements
         for (Markers m : response) {
             
             user = mGoogleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(Double.valueOf(m.getLatitude()),Double.valueOf(m.getLongtitude())))
-                .visible(false));
+                .position(new LatLng(Double.valueOf(m.getLatitude()),Double.valueOf(m.getLongtitude()))));
+            user.setVisible(false);
 
             if(!m.getUserId().equals(pref.getString(Constants.UNIQUE_ID,""))) {
                 picassoMarker = new PicassoMarker(user);
@@ -182,6 +204,18 @@ public class Map extends Fragment implements
                 marker.setVisible(false);
             }
         }
+    }
+
+    public double distanceFrom(double lat1, double lng1, double lat2, double lng2)
+    {
+        // Return distance between 2 points, stored as 2 pair location;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double dist = EARTH_RADIOUS * c;
+        return Double.valueOf(dist * METER_CONVERSION).floatValue();
     }
 
     private void updateUserLocation(String user_id,String latitude,String longtitude){

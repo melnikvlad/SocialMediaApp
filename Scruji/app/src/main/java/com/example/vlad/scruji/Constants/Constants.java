@@ -33,7 +33,7 @@ public class Constants {
     public static final String UPLOAD_URL2 ="http://"+IP+"/server/upload_other_photos.php";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_NAME = "user_id";
-    public static final int RADIUS = 400;
+    public static final int RANGE = 400;
 
 
 
