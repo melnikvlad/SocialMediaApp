@@ -9,13 +9,7 @@
   - Возможность просмотра местонахождения пользователей с идентичными тегами на картах Google Maps
   - Чат между пользователями
 
-### В разработке:
 
-  - Дабвление пользователей в друзья
-  - Чат между пользователями
-  - Отображение постов на странице пользователя
-  - Настройка области видимости других пользователей в картах
-  
 `Приложение находится в стадии активной разработки, этим оправдывается отсутствие дизайна и некоторого запланированного функционала :)`
   
 ### Ключевые инструменты:
@@ -32,6 +26,7 @@
 
 - ###  Логин, регистрация, создание профиля
 
+Логин и регистрация проводится через Firebase.
 ![Login.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/login.png)
 ![Register.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/register.png)
 ![CreateProfile.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/create_profile.png)
@@ -51,10 +46,19 @@
 
 ![MyTags.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/tags.png)
 
-При нажатии на тэг на главном экране, осуществляется вывод всех зарегистрированных пользователей с идентичным тэгом в своем профиле (В дальнейшем любое нажатие на карточку другого пользователя приведет на его профиль, где будут открыты функции добавления в друзья  и прочее)
-
+При нажатии на тэг на главном экране, осуществляется вывод всех зарегистрированных пользователей с идентичным тэгом в своем профиле.
 ![UsersWithEqualTagsFragment.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/by_tag.png)
+
+При выборе какого-либо пользователя мы попадаем на его страницу, где так же можем увидеть его фотографии и посты.
+Мы можем добавть его в друзья,что откроет возможность перейти в беседу друг с другом.
 ![UsersWithEqualTagsFragment.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/other_user_page.png)
+
+- ###  Чат (дорабатывается)
+
+Нажав на кнопку "Написать сообщение", мы перейдем на экран переписки, где, благодаря Firebase, сразу подгрузятся последние сообщение.
+Общение происходит в режиме realtime.
+
+![Chat.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/chat.png)
 
 - ###  Карты
 
