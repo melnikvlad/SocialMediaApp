@@ -27,6 +27,7 @@
 - ###  Логин, регистрация, создание профиля
 
 Логин и регистрация проводится через Firebase.
+
 ![Login.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/login.png)
 ![Register.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/register.png)
 ![CreateProfile.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/create_profile.png)
@@ -47,10 +48,12 @@
 ![MyTags.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/tags.png)
 
 При нажатии на тэг на главном экране, осуществляется вывод всех зарегистрированных пользователей с идентичным тэгом в своем профиле.
+
 ![UsersWithEqualTagsFragment.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/by_tag.png)
 
 При выборе какого-либо пользователя мы попадаем на его страницу, где так же можем увидеть его фотографии и посты.
 Мы можем добавть его в друзья,что откроет возможность перейти в беседу друг с другом.
+
 ![UsersWithEqualTagsFragment.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/other_user_page.png)
 
 - ###  Чат (дорабатывается)
