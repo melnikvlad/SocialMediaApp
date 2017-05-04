@@ -24,8 +24,6 @@
         <EditText
             android:hint="Name"
             android:id="@+id/et_name"
-
-            android:inputType="textPersonName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -40,7 +38,6 @@
         <EditText
             android:hint="Email"
             android:id="@+id/et_email"
-
             android:inputType="textEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

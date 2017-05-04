@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1037352186032",
+    "firebase_url": "https://scrujichat.firebaseio.com",
+    "project_id": "scrujichat",
+    "storage_bucket": "scrujichat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037352186032:android:d6ad20d92b5f3cb8",
+        "android_client_info": {
+          "package_name": "com.example.vlad.scruji"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037352186032-m5r30sm6dlptf71jh5i7dlp7i09k3jdl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vlad.scruji",
+            "certificate_hash": "61ebefa67acb2974d261079d9bc6027c26c9ad43"
+          }
+        },
+        {
+          "client_id": "1037352186032-1grkd3vu1ovvnuovp59jh032r04ihsc5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd9TqkJGZvNLz_19Xu_bCMhgz1zPu3cIQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037352186032-1grkd3vu1ovvnuovp59jh032r04ihsc5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

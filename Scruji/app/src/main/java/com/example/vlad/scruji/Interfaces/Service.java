@@ -5,6 +5,7 @@ import com.example.vlad.scruji.Models.Markers;
 import com.example.vlad.scruji.Models.Post;
 import com.example.vlad.scruji.Models.ServerRequest;
 import com.example.vlad.scruji.Models.ServerResponse;
+import com.example.vlad.scruji.Models.UniqID;
 import com.example.vlad.scruji.Models.UserOtherPhoto;
 import com.example.vlad.scruji.Models.UserTagsResponse;
 import com.example.vlad.scruji.Models.UserResponse;
@@ -65,6 +66,12 @@ public interface Service {
     );
 
     @FormUrlEncoded
+    @POST("get_uniq_id.php")
+    Call<ArrayList<UniqID>> get_uniq_id(
+            @Field("name")       String name
+    );
+
+    @FormUrlEncoded
     @POST("insert_post.php")
     Call<String> insert_post(
             @Field("user_id")    String user_id,
@@ -88,7 +95,6 @@ public interface Service {
     Call<String> create_profile(
             @Field("user_id")    String user_id,
             @Field("name")       String name,
-            @Field("surname")    String surname,
             @Field("age")        String age,
             @Field("country")    String country,
             @Field("city")       String city

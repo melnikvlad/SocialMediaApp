@@ -1,6 +1,7 @@
 package com.example.vlad.scruji.Fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -19,6 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.vlad.scruji.Adapters.OtherPhotosAdapter;
 import com.example.vlad.scruji.Adapters.PostsAdapter;
 import com.example.vlad.scruji.Adapters.TagsAdapter;
@@ -40,6 +46,9 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -51,8 +60,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class OtherUserProfile extends Fragment{
     CircularImageView roundedImageView;
-    LinearLayout box;
-    TextView friendship;
+    LinearLayout box,mess;
+    TextView friendship,write;
     SharedPreferences pref;
     private MyDB db;
     private RecyclerView rv,photos_rv,posts_rv;
@@ -60,7 +69,7 @@ public class OtherUserProfile extends Fragment{
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager manager;
     private List<String> list = new ArrayList<>();
-    private String name, lastname;
+    private String name;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,7 +80,9 @@ public class OtherUserProfile extends Fragment{
         back                = (TextView)view.findViewById(R.id.btn_back);
         country_city        = (TextView)view.findViewById(R.id.country_city);
         box                 = (LinearLayout)view.findViewById(R.id.container_for_add_to_friends);
+        mess                = (LinearLayout)view.findViewById(R.id.container_for_chat) ;
         friendship          = (TextView)view.findViewById(R.id.add_to_friends);
+        write               = (TextView)view.findViewById(R.id.write_message);
         rv                  = (RecyclerView)view.findViewById(R.id.recycler_view);
         photos_rv           = (RecyclerView)view.findViewById(R.id.photos_rv);
         posts_rv            = (RecyclerView)view.findViewById(R.id.posts_rv);
@@ -94,6 +105,12 @@ public class OtherUserProfile extends Fragment{
                 }
             }
         });
+        write.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                writeMessage();
+            }
+        });
 
         viewData();
 
@@ -107,6 +124,13 @@ public class OtherUserProfile extends Fragment{
             fragmentManager.beginTransaction().addToBackStack(null);
     }
 
+    private void goToChat() {
+        Chat fragment = new Chat();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.other_profile_frame,fragment).commit();
+        fragmentManager.beginTransaction().addToBackStack(null);
+    }
+
     private void viewData() {
         checkForFriendship();
         loadIcon(pref.getString(Constants.TEMP_ID,""));
@@ -114,6 +138,33 @@ public class OtherUserProfile extends Fragment{
         loadPhotos(pref.getString(Constants.TEMP_ID,""));
         loadTags(pref.getString(Constants.TEMP_ID,""));
         loadPosts(pref.getString(Constants.TEMP_ID,""));
+    }
+
+    private void loadPersonalInfo(String user_id) {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Service service = retrofit.create(Service.class);
+        Call<ArrayList<UserResponse>> call = service.get_user_personal_info(user_id);
+        call.enqueue(new retrofit2.Callback<ArrayList<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserResponse>> call, Response<ArrayList<UserResponse>> response) {
+
+                ArrayList<UserResponse> user = response.body();
+                name = user.get(0).getName();
+                FirebaseUserDetails.chatWith = name;
+                name_lastname_age.setText(name +", " + user.get(0).getAge() + " y.o.");
+                country_city.setText(user.get(0).getCountry() + ", " + user.get(0).getCity());
+            }
+            @Override
+            public void onFailure(Call<ArrayList<UserResponse>> call, Throwable t) {}
+        });
     }
 
 
@@ -148,6 +199,48 @@ public class OtherUserProfile extends Fragment{
             @Override
             public void onFailure(Call<ArrayList<CheckResponse>> call, Throwable t) {}
         });
+    }
+
+    private void writeMessage(){
+        String url = "https://scrujichat.firebaseio.com/users.json";
+        final ProgressDialog pd = new ProgressDialog(getActivity());
+        pd.setMessage("Loading...");
+        pd.show();
+
+        StringRequest request = new StringRequest(Request.Method.GET, url, new com.android.volley.Response.Listener<String>(){
+            @Override
+            public void onResponse(String s) {
+                if(s.equals("null")){
+                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    try {
+                        JSONObject obj = new JSONObject(s);
+
+                        if(!obj.has(name)){
+                            Toast.makeText(getActivity(), "user not found", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            goToChat();
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                pd.dismiss();
+
+            }
+        },new com.android.volley.Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                System.out.println("" + volleyError);
+                pd.dismiss();
+            }
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(getActivity());
+        rQueue.add(request);
     }
 
     private void addToFriends(String user_id,String other_user_id) {
@@ -197,32 +290,6 @@ public class OtherUserProfile extends Fragment{
                 });
     }
 
-    private void loadPersonalInfo(String user_id) {
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        Service service = retrofit.create(Service.class);
-        Call<ArrayList<UserResponse>> call = service.get_user_personal_info(user_id);
-        call.enqueue(new retrofit2.Callback<ArrayList<UserResponse>>() {
-            @Override
-            public void onResponse(Call<ArrayList<UserResponse>> call, Response<ArrayList<UserResponse>> response) {
-
-                ArrayList<UserResponse> user = response.body();
-                name = user.get(0).getName();
-                lastname = user.get(0).getLastname();
-                name_lastname_age.setText(name + " " + lastname + ", " + user.get(0).getAge() + " y.o.");
-                country_city.setText(user.get(0).getCountry() + ", " + user.get(0).getCity());
-            }
-            @Override
-            public void onFailure(Call<ArrayList<UserResponse>> call, Throwable t) {}
-        });
-    }
 
     private void loadPhotos(String user_id) {
         Gson gson = new GsonBuilder()
@@ -309,7 +376,7 @@ public class OtherUserProfile extends Fragment{
                 adapter = new PostsAdapter(
                         getActivity(),
                         mResponse,
-                        lastname+" "+name
+                        name
                 );
                 adapter.notifyDataSetChanged();
                 posts_rv.setAdapter(adapter);

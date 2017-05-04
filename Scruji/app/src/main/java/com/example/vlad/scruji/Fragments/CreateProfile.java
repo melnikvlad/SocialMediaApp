@@ -45,9 +45,9 @@ import static android.app.Activity.RESULT_OK;
 
 public class CreateProfile extends Fragment {
 
-    private EditText editName ,editLastname,editCountry,editCity,editAge;
+    private EditText editName ,editCountry,editCity,editAge;
     private Button saveButton;
-    private String name,surname,age,country,city;
+    private String name,age,country,city;
     private SharedPreferences pref;
     private ImageView imageView;
     private Bitmap bitmap;
@@ -69,7 +69,6 @@ public class CreateProfile extends Fragment {
         Log.d("TAG+","- SETUP - USER ID : "+pref.getString(Constants.UNIQUE_ID,""));
         saveButton      = (Button)  view.findViewById(R.id.btn_save);
         editName        = (EditText)view.findViewById(R.id.et_name);
-        editLastname    = (EditText)view.findViewById(R.id.et_lastname);
         editCity        = (EditText)view.findViewById(R.id.et_city);
         editCountry     = (EditText)view.findViewById(R.id.et_country);
         editAge         = (EditText)view.findViewById(R.id.et_age);
@@ -86,20 +85,19 @@ public class CreateProfile extends Fragment {
             public void onClick(View view) {
 
                 name    = editName.getText().toString();
-                surname = editLastname.getText().toString();
                 age     = editAge.getText().toString();
                 country = editCountry.getText().toString();
                 city    = editCity.getText().toString();
 
-                createProfile(pref.getString(Constants.UNIQUE_ID,""), name, surname, age, country, city);
+                createProfile(pref.getString(Constants.UNIQUE_ID,""), name,age, country, city);
                 uploadImage();
             }
         });
     }
     //============================================CREATE PROFILE================================================================
-    public void createProfile(String user_id, String name, String lastname, String age, String country, String city) {
+    public void createProfile(String user_id, String name, String age, String country, String city) {
             User users = new User();
-            db.insertUser(new User(user_id,name,lastname,age,country,city));
+            db.insertUser(new User(user_id,name,age,country,city));
             users = db.getUser(user_id);
             Log.d("TAG+","- SETUP - ID IN LIST "+ users.getUser_id());
 
@@ -116,7 +114,6 @@ public class CreateProfile extends Fragment {
                     Request request = new Request();
                     request.setUser_id(users.getUser_id());
                     request.setName(users.getName());
-                    request.setSurname(users.getSurname());
                     request.setAge(users.getAge());
                     request.setCountry(users.getCountry());
                     request.setCity(users.getCity());
@@ -125,7 +122,6 @@ public class CreateProfile extends Fragment {
                 Call<String> call = service.create_profile(
                         request.getUser_id(),
                         request.getName(),
-                        request.getSurname(),
                         request.getAge(),
                         request.getCountry(),
                         request.getCity());

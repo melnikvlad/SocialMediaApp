@@ -22,10 +22,8 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:hint="Email"
-            android:id="@+id/et_email"
-
-            android:inputType="textEmailAddress"
+            android:hint="User Name"
+            android:id="@+id/nameField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -40,7 +38,6 @@
         <EditText
             android:hint="Password"
             android:id="@+id/et_password"
-
             android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

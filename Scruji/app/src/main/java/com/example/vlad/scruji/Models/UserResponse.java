@@ -11,9 +11,6 @@ public class UserResponse {
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("lastname")
-    @Expose
-    private String lastname;
     @SerializedName("age")
     @Expose
     private String age;
@@ -38,14 +35,6 @@ public class UserResponse {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
     }
 
     public String getAge() {

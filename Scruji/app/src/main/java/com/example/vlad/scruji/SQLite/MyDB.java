@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyDB extends SQLiteOpenHelper {
-    public final static int DB_VERSION = 3;
+    public final static int DB_VERSION = 4;
     public final static String DB_NAME = "AppSQLiteDataBase";
 
     public final static String TAGS_TABLE_NAME = "TagsTable";
@@ -27,7 +27,6 @@ public class MyDB extends SQLiteOpenHelper {
     public final static String TAGS = "TAGS";
 
     public final static String NAME = "NAMES";
-    public final static String LASTNAME = "LASTNAMES";
     public final static String AGE = "AGES";
     public final static String COUNTRY = "COUNTRIES";
     public final static String CITY = "CITIES";
@@ -51,7 +50,6 @@ public class MyDB extends SQLiteOpenHelper {
             " ("+ID+ " INTEGER PRIMARY KEY, "+
             USER_ID+" TEXT, "+
             NAME+" TEXT, "+
-            LASTNAME+" TEXT, "+
             AGE+" TEXT, "+
             COUNTRY+" TEXT, "+
             CITY+" TEXT)";
@@ -140,7 +138,6 @@ public class MyDB extends SQLiteOpenHelper {
             ContentValues contentValues = new ContentValues();
             contentValues.put(USER_ID,user.getUser_id());
             contentValues.put(NAME,user.getName());
-            contentValues.put(LASTNAME,user.getSurname());
             contentValues.put(AGE,user.getAge());
             contentValues.put(COUNTRY,user.getCountry());
             contentValues.put(CITY,user.getCity());
@@ -157,10 +154,9 @@ public class MyDB extends SQLiteOpenHelper {
             do {
                 user.setUser_id(cursor.getString(1));
                 user.setName(cursor.getString(2));
-                user.setSurname(cursor.getString(3));
-                user.setAge(cursor.getString(4));
-                user.setCountry(cursor.getString(5));
-                user.setCity(cursor.getString(6));
+                user.setAge(cursor.getString(3));
+                user.setCountry(cursor.getString(4));
+                user.setCity(cursor.getString(5));
             } while (cursor.moveToNext());
         }
         return user;

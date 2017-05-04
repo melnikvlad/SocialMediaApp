@@ -1,6 +1,7 @@
 package com.example.vlad.scruji.Fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,14 +16,24 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
-import com.example.vlad.scruji.Models.ServerRequest;
-import com.example.vlad.scruji.Models.ServerResponse;
-import com.example.vlad.scruji.Models.UserRegistrationData;
+import com.example.vlad.scruji.Models.UniqID;
 import com.example.vlad.scruji.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,10 +44,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Login extends Fragment implements View.OnClickListener{
 
     private AppCompatButton btn_login;
-    private EditText et_email,et_password;
+    private EditText name_et,et_password;
     private TextView tv_register;
     private ProgressBar progress;
     private SharedPreferences pref;
+    String user,pass,email;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,7 +64,7 @@ public class Login extends Fragment implements View.OnClickListener{
 
         btn_login = (AppCompatButton)view.findViewById(R.id.btn_login);
         tv_register = (TextView)view.findViewById(R.id.tv_register);
-        et_email = (EditText)view.findViewById(R.id.et_email);
+        name_et = (EditText)view.findViewById(R.id.nameField);
         et_password = (EditText)view.findViewById(R.id.et_password);
         progress = (ProgressBar)view.findViewById(R.id.progress);
         btn_login.setOnClickListener(this);
@@ -69,55 +81,97 @@ public class Login extends Fragment implements View.OnClickListener{
                 break;
 
             case R.id.btn_login:
-                String email = et_email.getText().toString();
-                String password = et_password.getText().toString();
-
-                if (!email.isEmpty() && !password.isEmpty()) {
-                    progress.setVisibility(View.VISIBLE);
-
-                    loginProcess(email, password);
-
-                    break;
-                }
+                loginProcess();
+                break;
         }
     }
-    private void loginProcess(String email,String password){
+
+    private void loginProcess(){
+        user = name_et.getText().toString();
+        pass = et_password.getText().toString();
+
+        if(user.equals("")){
+            name_et.setError("can't be blank");
+        }
+        else if(pass.equals("")){
+            et_password.setError("can't be blank");
+        }
+        else{
+            String url = "https://scrujichat.firebaseio.com/users.json";
+            final ProgressDialog pd = new ProgressDialog(getContext());
+            pd.setMessage("Loading...");
+            pd.show();
+
+            StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
+                @Override
+                public void onResponse(String s) {
+                    if(s.equals("null")){
+                        Toast.makeText(getActivity(), "user not found", Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        try {
+                            JSONObject obj = new JSONObject(s);
+
+                            if(!obj.has(user)){
+                                Toast.makeText(getActivity(), "user not found", Toast.LENGTH_LONG).show();
+                            }
+                            else if(obj.getJSONObject(user).getString("password").equals(pass)){
+                                FirebaseUserDetails.username = user;
+                                FirebaseUserDetails.password = pass;
+                                getUniqID(user);
+                            }
+                            else {
+                                Toast.makeText(getActivity(), "incorrect password", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    pd.dismiss();
+                }
+            },new Response.ErrorListener(){
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    System.out.println("" + volleyError);
+                    pd.dismiss();
+                }
+            });
+
+            RequestQueue rQueue = Volley.newRequestQueue(getActivity());
+            rQueue.add(request);
+        }
+    }
+
+    private void getUniqID(String name){
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        UserRegistrationData user = new UserRegistrationData();
-        user.setEmail(email);
-        user.setPassword(password);
-        ServerRequest request = new ServerRequest();
-        request.setOperation(Constants.LOGIN_OPERATION);
-        request.setUser(user);
 
         Service requestInterface = retrofit.create(Service.class);
-        Call<ServerResponse> response = requestInterface.index(request);
-        response.enqueue(new Callback<ServerResponse>() {
+        Call<ArrayList<UniqID>> response = requestInterface.get_uniq_id(name);
+        response.enqueue(new Callback<ArrayList<UniqID>>() {
             @Override
-            public void onResponse(Call<ServerResponse> call, retrofit2.Response<ServerResponse> response) {
+            public void onResponse(Call<ArrayList<UniqID>> call, retrofit2.Response<ArrayList<UniqID>> response) {
 
-                ServerResponse resp = response.body();
+                ArrayList<UniqID> resp = response.body();
 
-                if(resp.getResult().equals(Constants.SUCCESS)){
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putBoolean(Constants.IS_LOGGED_IN,true);
-                    editor.putString(Constants.EMAIL,resp.getUser().getEmail());
-                    editor.putString(Constants.NAME,resp.getUser().getName());
-                    editor.putString(Constants.UNIQUE_ID,resp.getUser().getUnique_id());
+                    editor.putString(Constants.EMAIL,resp.get(0).getEmail());
+                    editor.putString(Constants.NAME,resp.get(0).getName());
+                    editor.putString(Constants.UNIQUE_ID,resp.get(0).getUserId());
                     editor.apply();
-                    Log.d("TAG+","LOGIN SCREEN MUST BE SMTHNG "+pref.getString(Constants.UNIQUE_ID,""));
-                }
+
                 progress.setVisibility(View.INVISIBLE);
                 goToProfile();
             }
 
             @Override
-            public void onFailure(Call<ServerResponse> call, Throwable t) {
+            public void onFailure(Call<ArrayList<UniqID>> call, Throwable t) {
                 progress.setVisibility(View.INVISIBLE);
                 Log.d(Constants.TAG,"failed");
                 Snackbar.make(getView(), t.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
@@ -136,17 +190,16 @@ public class Login extends Fragment implements View.OnClickListener{
     private void goToProfile(){
         if(pref.getBoolean(Constants.PROFILE_CREATED,true))
         {
-            Log.d("TAG+","LOGIN SCREEN GO TO PROFILE "+pref.getString(Constants.UNIQUE_ID,""));
             MainScreen profile = new MainScreen();
             android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_frame,profile);
             ft.commit();
         }
-        else
-        {
+        else {
             goToCreateProfile();
         }
     }
+
     private void goToCreateProfile(){
 
         CreateProfile profile = new CreateProfile();

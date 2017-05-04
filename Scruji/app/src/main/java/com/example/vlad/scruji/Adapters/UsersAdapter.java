@@ -68,7 +68,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                 goToOtherUserProfile();
             }
         });
-        viewHolder.tv_android.setText(filtered.get(i).getName()+" "+ filtered.get(i).getLastname()+", "+filtered.get(i).getAge()+" y.o.");
+        viewHolder.tv_android.setText(filtered.get(i).getName()+", "+filtered.get(i).getAge()+" y.o.");
         viewHolder.tv2_android.setText(filtered.get(i).getCountry()+", "+filtered.get(i).getCity());
         Transformation transformation = new RoundedTransformationBuilder()
                 .borderColor(Color.BLACK)

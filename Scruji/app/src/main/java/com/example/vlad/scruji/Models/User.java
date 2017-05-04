@@ -3,7 +3,6 @@ package com.example.vlad.scruji.Models;
 public class User {
         private String user_id;
         private String name;
-        private String surname;
         private String age;
         private String country;
         private String city;
@@ -12,10 +11,9 @@ public class User {
     public User() {
     }
 
-    public User(String user_id, String name, String surname, String age, String country, String city) {
+    public User(String user_id, String name,String age, String country, String city) {
         this.user_id = user_id;
         this.name = name;
-        this.surname = surname;
         this.age = age;
         this.country = country;
         this.city = city;
@@ -37,10 +35,6 @@ public class User {
             return name;
         }
 
-        public String getSurname() {
-            return surname;
-        }
-
         public String getUser_id() {
             return user_id;
         }
@@ -59,10 +53,6 @@ public class User {
 
         public void setName(String name) {
             this.name = name;
-        }
-
-        public void setSurname(String surname) {
-            this.surname = surname;
         }
 
         public void setUser_id(String user_id) {

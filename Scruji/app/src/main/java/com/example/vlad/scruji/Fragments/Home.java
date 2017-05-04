@@ -120,7 +120,7 @@ public class Home extends Fragment  {
             loadPersonalInfo();
         }
         else{
-            name_lastname_age.setText(user.getName() + " " + user.getSurname() + ", " + user.getAge() + " y.o.");
+            name_lastname_age.setText(user.getName()+" " + user.getAge()  + " y.o.");
             country_city.setText(user.getCountry() + ", " + user.getCity());
         }
     }
@@ -145,15 +145,14 @@ public class Home extends Fragment  {
                 User new_user = new User(
                         user.get(0).getId(),
                         user.get(0).getName(),
-                        user.get(0).getLastname(),
                         user.get(0).getAge(),
                         user.get(0).getCountry(),
                         user.get(0).getCity()
                 );
                 db.insertUser(new_user);
                 name = user.get(0).getName();
-                lastname = user.get(0).getLastname();
-                name_lastname_age.setText(user.get(0).getName() + " " + user.get(0).getLastname() + ", " + user.get(0).getAge() + " y.o.");
+                FirebaseUserDetails.username = name;
+                name_lastname_age.setText(user.get(0).getName() +", " + user.get(0).getAge() + " y.o.");
                 country_city.setText(user.get(0).getCountry() + ", " + user.get(0).getCity());
             }
             @Override
@@ -249,7 +248,7 @@ public class Home extends Fragment  {
                 adapter = new PostsAdapter(
                         getActivity(),
                         mResponse,
-                        name+" "+lastname
+                        name
                 );
                 adapter.notifyDataSetChanged();
                 posts_rv.setAdapter(adapter);
