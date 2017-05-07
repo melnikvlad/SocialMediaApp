@@ -45,7 +45,7 @@
 
 При нажатии на текст "Мои тэги" переходим на экран управления тэгами, где мы можем увидеть список всех тэгов и там же добавить их.
 
-![MyTags.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/tags.png)
+![MyTags.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/tagggs.png)
 
 При нажатии на тэг на главном экране, осуществляется вывод всех зарегистрированных пользователей с идентичным тэгом в своем профиле.
 
