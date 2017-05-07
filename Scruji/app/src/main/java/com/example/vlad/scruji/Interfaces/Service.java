@@ -115,6 +115,12 @@ public interface Service {
     );
 
     @FormUrlEncoded
+    @POST("get_friends_count.php")
+    Call<String> get_friends_count(
+            @Field("user_id") String user_id
+    );
+
+    @FormUrlEncoded
     @POST("get_user_tags.php")
     Call<ArrayList<UserTagsResponse>> get_user_tags(
             @Field("user_id") String user_id

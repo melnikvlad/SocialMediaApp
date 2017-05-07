@@ -50,7 +50,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Home extends Fragment  {
     private SharedPreferences pref;
     private CircularImageView roundedImageView;
-    private TextView name_lastname_age,country_city;
+    private TextView name_lastname_age,country_city,friends_count;
     private ImageView m_photos,m_tags,m_posts;
     private MyDB db;
     private RecyclerView rv,photos_rv,posts_rv;
@@ -67,6 +67,7 @@ public class Home extends Fragment  {
         roundedImageView    = (CircularImageView) view.findViewById(R.id.imageView1);
         name_lastname_age   = (TextView)view.findViewById(R.id.name_lastname_age);
         country_city        = (TextView)view.findViewById(R.id.country_city);
+        friends_count       = (TextView)view.findViewById(R.id.friend_count);
         m_photos            = (ImageView)view.findViewById(R.id.more_photos);
         m_tags              = (ImageView)view.findViewById(R.id.more_tags);
         m_posts             = (ImageView)view.findViewById(R.id.more_posts);
@@ -110,7 +111,7 @@ public class Home extends Fragment  {
         else {
             loadTagsFromSQLite();
         }
-
+        loadFriendsCountFromServer();
         loadPostsFromServer();
         loadOtherPhotosFromServer();
         loadPicture(pref.getString(Constants.UNIQUE_ID,""));
@@ -124,6 +125,33 @@ public class Home extends Fragment  {
             name_lastname_age.setText(user.getName()+" " + user.getAge()  + " y.o.");
             country_city.setText(user.getCountry() + ", " + user.getCity());
         }
+    }
+
+    private void loadFriendsCountFromServer(){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Service service = retrofit.create(Service.class);
+        Call<String> call = service.get_friends_count(pref.getString(Constants.UNIQUE_ID,""));
+        call.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+                String mResponse = response.body();
+//                Log.d("TAG+","FR COUNT "+mResponse.size());
+                friends_count.setText(mResponse);
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("TAG+","FR COUNT "+ t.getMessage());
+            }
+        });
     }
 
     private void loadPersonalInfo() {
@@ -177,12 +205,16 @@ public class Home extends Fragment  {
             public void onResponse(Call<ArrayList<UserOtherPhoto>> call, Response<ArrayList<UserOtherPhoto>> response) {
 
                 ArrayList<UserOtherPhoto> mResponse = response.body();
-
-                manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-                photos_rv.setLayoutManager(manager);
-                adapter = new OtherPhotosAdapter(getActivity(),mResponse);
-                photos_rv.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                if(mResponse.size()==0){
+                    photos_rv.setVisibility(View.GONE);
+                }
+                else{
+                    manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                    photos_rv.setLayoutManager(manager);
+                    adapter = new OtherPhotosAdapter(getActivity(),mResponse);
+                    photos_rv.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
             }
             @Override
             public void onFailure(Call<ArrayList<UserOtherPhoto>> call, Throwable t) {}
@@ -206,18 +238,22 @@ public class Home extends Fragment  {
             public void onResponse(Call<ArrayList<UserTagsResponse>> call, Response<ArrayList<UserTagsResponse>> response) {
 
                 ArrayList<UserTagsResponse> mResponse = response.body();
-
-                for(UserTagsResponse i : mResponse) {
-                    db.insertTag(new Tag(i.getUserId(),i.getTag()));
+                if (mResponse.size() == 0) {
+                    rv.setVisibility(View.GONE);
                 }
+                else{
+                    for(UserTagsResponse i : mResponse) {
+                        db.insertTag(new Tag(i.getUserId(),i.getTag()));
+                    }
 
-                list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+                    list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
 
-                manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-                rv.setLayoutManager(manager);
-                adapter = new TagsAdapter(getActivity(),list);
-                adapter.notifyDataSetChanged();
-                rv.setAdapter(adapter);
+                    manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                    rv.setLayoutManager(manager);
+                    adapter = new TagsAdapter(getActivity(),list);
+                    adapter.notifyDataSetChanged();
+                    rv.setAdapter(adapter);
+                }
             }
             @Override
             public void onFailure(Call<ArrayList<UserTagsResponse>> call, Throwable t) {}
@@ -241,17 +277,22 @@ public class Home extends Fragment  {
             public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
 
                 ArrayList<Post> mResponse = response.body();
+                if (mResponse.size() == 0) {
+                    posts_rv.setVisibility(View.GONE);
+                }
+                else {
+                    manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                    posts_rv.setLayoutManager(manager);
 
-                manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-                posts_rv.setLayoutManager(manager);
+                    adapter = new PostsAdapter(
+                            getActivity(),
+                            mResponse,
+                            name
+                    );
+                    adapter.notifyDataSetChanged();
+                    posts_rv.setAdapter(adapter);
+                }
 
-                adapter = new PostsAdapter(
-                        getActivity(),
-                        mResponse,
-                        name
-                );
-                adapter.notifyDataSetChanged();
-                posts_rv.setAdapter(adapter);
             }
             @Override
             public void onFailure(Call<ArrayList<Post>> call, Throwable t) {}
@@ -261,11 +302,16 @@ public class Home extends Fragment  {
     private void loadTagsFromSQLite(){
         list = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
 
-        manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        rv.setLayoutManager(manager);
-        adapter = new TagsAdapter(getActivity(),list);
-        adapter.notifyDataSetChanged();
-        rv.setAdapter(adapter);
+        if (list.size() == 0) {
+            rv.setVisibility(View.GONE);
+        }
+        else{
+            manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+            rv.setLayoutManager(manager);
+            adapter = new TagsAdapter(getActivity(),list);
+            adapter.notifyDataSetChanged();
+            rv.setAdapter(adapter);
+        }
     }
 
     private void loadPicture(String user_id) {

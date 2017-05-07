@@ -165,6 +165,7 @@ public class OtherUserProfile extends Fragment{
             @Override
             public void onFailure(Call<ArrayList<UserResponse>> call, Throwable t) {}
         });
+        Log.d("CHAT","chat with  "+ FirebaseUserDetails.chatWith);
     }
 
 
@@ -308,12 +309,16 @@ public class OtherUserProfile extends Fragment{
             public void onResponse(Call<ArrayList<UserOtherPhoto>> call, Response<ArrayList<UserOtherPhoto>> response) {
 
                 ArrayList<UserOtherPhoto> mResponse = response.body();
-
-                manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-                photos_rv.setLayoutManager(manager);
-                adapter = new OtherPhotosAdapter(getActivity(),mResponse);
-                photos_rv.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                if (mResponse.size() == 0) {
+                    photos_rv.setVisibility(View.GONE);
+                }
+                else{
+                    manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                    photos_rv.setLayoutManager(manager);
+                    adapter = new OtherPhotosAdapter(getActivity(),mResponse);
+                    photos_rv.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
             }
             @Override
             public void onFailure(Call<ArrayList<UserOtherPhoto>> call, Throwable t) {}
@@ -337,15 +342,21 @@ public class OtherUserProfile extends Fragment{
             public void onResponse(Call<ArrayList<UserTagsResponse>> call, Response<ArrayList<UserTagsResponse>> response) {
 
                 ArrayList<UserTagsResponse> mResponse = response.body();
-                for(UserTagsResponse t : mResponse){
-                    list.add(t.getTag());
+                if (mResponse.size() == 0) {
+                    rv.setVisibility(View.GONE);
                 }
+                else {
 
-                manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-                rv.setLayoutManager(manager);
-                adapter = new TagsAdapter(getActivity(),list);
-                adapter.notifyDataSetChanged();
-                rv.setAdapter(adapter);
+                    for (UserTagsResponse t : mResponse) {
+                        list.add(t.getTag());
+                    }
+
+                    manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+                    rv.setLayoutManager(manager);
+                    adapter = new TagsAdapter(getActivity(), list);
+                    adapter.notifyDataSetChanged();
+                    rv.setAdapter(adapter);
+                }
             }
             @Override
             public void onFailure(Call<ArrayList<UserTagsResponse>> call, Throwable t) {}
@@ -369,17 +380,22 @@ public class OtherUserProfile extends Fragment{
             public void onResponse(Call<ArrayList<Post>> call, Response<ArrayList<Post>> response) {
 
                 ArrayList<Post> mResponse = response.body();
+                if (mResponse.size() == 0) {
+                    posts_rv.setVisibility(View.GONE);
+                }
+                else {
 
-                manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-                posts_rv.setLayoutManager(manager);
+                    manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+                    posts_rv.setLayoutManager(manager);
 
-                adapter = new PostsAdapter(
-                        getActivity(),
-                        mResponse,
-                        name
-                );
-                adapter.notifyDataSetChanged();
-                posts_rv.setAdapter(adapter);
+                    adapter = new PostsAdapter(
+                            getActivity(),
+                            mResponse,
+                            name
+                    );
+                    adapter.notifyDataSetChanged();
+                    posts_rv.setAdapter(adapter);
+                }
             }
             @Override
             public void onFailure(Call<ArrayList<Post>> call, Throwable t) {}

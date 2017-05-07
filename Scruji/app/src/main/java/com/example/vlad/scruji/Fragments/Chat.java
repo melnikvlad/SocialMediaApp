@@ -39,6 +39,7 @@ public class Chat extends Fragment {
     ScrollView scrollView;
     Firebase reference1, reference2;
     SharedPreferences pref;
+    TextView back;
 
     @Nullable
     @Override
@@ -51,9 +52,17 @@ public class Chat extends Fragment {
         sendButton = (ImageView) view.findViewById(R.id.sendButton);
         messageArea = (EditText) view.findViewById(R.id.messageArea);
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+        back        = (TextView) view.findViewById(R.id.btn_back);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toPreviousPage();
+            }
+        });
 
         Firebase.setAndroidContext(getContext());
-        Log.d("TAG+","Chat: "+ pref.getString(Constants.NAME,"") + "_" + FirebaseUserDetails.chatWith);
+        Log.d("CHAT","Chat: "+ pref.getString(Constants.NAME,"") + "_" + FirebaseUserDetails.chatWith);
         reference1 = new Firebase("https://scrujichat.firebaseio.com/messages/" + pref.getString(Constants.NAME,"") + "_" + FirebaseUserDetails.chatWith);
         reference2 = new Firebase("https://scrujichat.firebaseio.com/messages/" + FirebaseUserDetails.chatWith + "_" + pref.getString(Constants.NAME,""));
 
@@ -81,7 +90,7 @@ public class Chat extends Fragment {
                 String userName = map.get("user").toString();
 
                 if (userName.equals(pref.getString(Constants.NAME,""))) {
-                    addMessageBox("You:\n" + message, 1);
+                    addMessageBox("Я:\n" + message, 1);
                 } else {
                     addMessageBox(FirebaseUserDetails.chatWith + ":\n" + message, 2);
                 }
@@ -137,6 +146,13 @@ public class Chat extends Fragment {
     public SharedPreferences getPreferences(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivityContex());
         return prefs;
+    }
+
+    private void toPreviousPage(){
+        Home fragment = new Home();
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.chat_frame,fragment);
+        ft.commit();
     }
 
 }

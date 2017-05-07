@@ -37,7 +37,7 @@
 Загрузка информации либо с SQLite, либо с локального сервера из базы MySQL с помощью Retrofit 2.
 Все фотографии загружаются с помощью Picasso по пути, указывающим на расположение фотографии на локальном сервере.
 
-![Home.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/main.png)
+![Home.java](https://github.com/melnikvlad/SocialMediaApp/blob/master/Readme/main2.png)
 
 При нажатии на текст "Добавить фото" переходим на экран выбора фотографии из галереи телефона, которая потом добавится в горизонтальный Recycler View на главном экране.
 

@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -45,6 +46,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -102,8 +104,22 @@ public class AddTags extends Fragment {
 
                 String itemTag = editText.getText().toString();
                 if(!itemTag.equals("")){
-                    insertTagToMySQLandToSQLite(itemTag);
-                    addTagToFirebase(itemTag);
+                    List<String> temp_list_of_tags = new ArrayList<String>();
+                    boolean can_add_tag = true;
+                    temp_list_of_tags = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+                    for(String item:temp_list_of_tags){
+
+                        if(Objects.equals(item, itemTag)){
+                            can_add_tag = false;
+                        }
+                    }
+                    if(can_add_tag){
+                        insertTagToMySQLandToSQLite(itemTag);
+                        addTagToFirebase(itemTag);
+                    }
+                    else{
+                        Toast.makeText(getActivityContex(),"Тэг уже был добавлен",Toast.LENGTH_LONG).show();
+                    }
                 }
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString(Constants.TEMP_TAG, "");

@@ -166,6 +166,9 @@ public class Login extends Fragment implements View.OnClickListener{
                     editor.putString(Constants.UNIQUE_ID,resp.get(0).getUserId());
                     editor.apply();
 
+                Log.d("CHAT","name "+ pref.getString(Constants.NAME,""));
+                Log.d("CHAT","name "+ pref.getString(Constants.UNIQUE_ID,""));
+
                 progress.setVisibility(View.INVISIBLE);
                 goToProfile();
             }
