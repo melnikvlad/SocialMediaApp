@@ -11,7 +11,6 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,8 +69,9 @@ public class AddPost extends Fragment {
             @Override
             public void onClick(View view) {
                 DateFormat df = new SimpleDateFormat("EEE,d MMM yyyy HH mm");
-                String desc = post_description.getText().toString();
                 String date = df.format(Calendar.getInstance().getTime());
+                String desc = post_description.getText().toString();
+
                 uploadImage(date);
                 insertPostToMySQLandToSQLite(desc,date);
             }
@@ -148,7 +148,7 @@ public class AddPost extends Fragment {
                 }
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Log.d("TAG+","Error "+ t.getMessage());
+
                 }
             });
         }

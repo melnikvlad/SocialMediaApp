@@ -26,6 +26,7 @@ public class Constants {
     public static final String TEMP_ID = "temp_id";
 
     public static final String TAG = "TAG+";
+    public static final String TEMP_TAG = "temp_tag";
     public static final int TABS_COUNT = 4;
     public static final int PICK_IMAGE_REQUEST = 1;
 

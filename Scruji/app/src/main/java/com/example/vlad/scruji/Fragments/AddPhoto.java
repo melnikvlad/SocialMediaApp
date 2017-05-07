@@ -26,6 +26,8 @@ import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import retrofit2.Call;
@@ -68,7 +70,8 @@ public class AddPhoto extends Fragment {
 
     public void uploadImage(){
         String image = getStringImage(bitmap);
-        String date = java.text.DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+        DateFormat df = new SimpleDateFormat("EEE,d MMM yyyy HH mm");
+        String date = df.format(Calendar.getInstance().getTime());
 
         Gson gson = new GsonBuilder()
                 .setLenient()

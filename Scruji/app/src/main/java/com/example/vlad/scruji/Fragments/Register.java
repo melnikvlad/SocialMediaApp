@@ -94,8 +94,6 @@ public class Register extends Fragment implements View.OnClickListener{
         pass = et_password.getText().toString();
         email= et_email.getText().toString();
 
-        saveDataToMySQL(user,email,pass);
-
         if(user.equals("")){
             et_name.setError("can't be blank");
         }
@@ -116,19 +114,21 @@ public class Register extends Fragment implements View.OnClickListener{
             pd.setMessage("Loading...");
             pd.show();
 
+            saveDataToMySQL(user,email,pass);
             String url = "https://scrujichat.firebaseio.com/users.json";
 
             StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
                 @Override
                 public void onResponse(String s) {
                     pd.dismiss();
-                    setUniqID(user,s);
+                    setFirebaseObj(user,s);
                 }
 
             },new Response.ErrorListener(){
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     System.out.println("" + volleyError );
+                    Log.d("TAG+","Error"+ volleyError.getMessage());
                     pd.dismiss();
                 }
             });
@@ -138,7 +138,7 @@ public class Register extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void setUniqID(String name, final String s){
+    private void setFirebaseObj(String name, final String s){
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
@@ -184,7 +184,7 @@ public class Register extends Fragment implements View.OnClickListener{
             @Override
             public void onFailure(Call<ArrayList<UniqID>> call, Throwable t) {
                 progress.setVisibility(View.INVISIBLE);
-                Log.d(Constants.TAG,"failed");
+                Log.d(Constants.TAG,"failed unia_id");
                 Snackbar.make(getView(), t.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
             }
         });

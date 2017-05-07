@@ -57,7 +57,7 @@ public class Home extends Fragment  {
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager manager;
     private List<String> list = new ArrayList<>();
-    private String name, lastname;
+    private String name;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         pref = getPreferences();
@@ -120,6 +120,7 @@ public class Home extends Fragment  {
             loadPersonalInfo();
         }
         else{
+            name = user.getName();
             name_lastname_age.setText(user.getName()+" " + user.getAge()  + " y.o.");
             country_city.setText(user.getCountry() + ", " + user.getCity());
         }
@@ -151,7 +152,6 @@ public class Home extends Fragment  {
                 );
                 db.insertUser(new_user);
                 name = user.get(0).getName();
-                FirebaseUserDetails.username = name;
                 name_lastname_age.setText(user.get(0).getName() +", " + user.get(0).getAge() + " y.o.");
                 country_city.setText(user.get(0).getCountry() + ", " + user.get(0).getCity());
             }
@@ -275,9 +275,8 @@ public class Home extends Fragment  {
                 .cornerRadiusDp(30)
                 .oval(false)
                 .build();
-        Picasso.with(getActivityContex())
+        Picasso.with(getActivity())
                 .load(Constants.PICASSO_MAIN +user_id+".png")
-                .placeholder(R.mipmap.ic_launcher)
                 .transform(transformation)
                 .into(roundedImageView, new Callback() {
                     @Override

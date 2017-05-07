@@ -168,7 +168,7 @@ public class CreateProfile extends Fragment {
                 params.put(Constants.KEY_NAME,pref.getString(Constants.UNIQUE_ID,"key") );
                 return params;
             }};
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(stringRequest);
     }
 

@@ -55,6 +55,7 @@
             android:textColor="@android:color/background_dark"
             android:textSize="18sp" />
     </LinearLayout>
+
     <android.support.v7.widget.SearchView
         android:id="@+id/serchview"
         android:layout_width="match_parent"
@@ -63,6 +64,39 @@
         android:background="@android:color/background_light">
 
     </android.support.v7.widget.SearchView>
+
+        <TextView
+            android:id="@+id/all_tags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Все тэги:"
+            android:textAllCaps="false"
+            android:textColor="@android:color/background_dark"
+            android:textSize="16sp" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/popular_tags"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="3dp"
+        android:background="@android:color/transparent"
+        android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cardview_light_background"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/my_tags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Мои тэги:"
+            android:textAllCaps="false"
+            android:textColor="@android:color/background_dark"
+            android:textSize="16sp" />
+        </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
