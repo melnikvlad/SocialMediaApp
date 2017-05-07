@@ -18,17 +18,27 @@
 
         <TextView
             android:id="@+id/btn_back"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="5dp"
-
-
             android:gravity="center"
             android:text="Назад"
             android:textAlignment="textStart"
             android:textAllCaps="false"
             android:textColor="@android:color/background_dark"
             android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/chat_with"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:gravity="center"
+
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@android:color/background_dark"
+            android:textSize="24sp" />
     </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"

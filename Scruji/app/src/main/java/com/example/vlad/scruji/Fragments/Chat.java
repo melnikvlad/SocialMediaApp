@@ -39,7 +39,7 @@ public class Chat extends Fragment {
     ScrollView scrollView;
     Firebase reference1, reference2;
     SharedPreferences pref;
-    TextView back;
+    TextView back,chat_with;
 
     @Nullable
     @Override
@@ -53,6 +53,7 @@ public class Chat extends Fragment {
         messageArea = (EditText) view.findViewById(R.id.messageArea);
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         back        = (TextView) view.findViewById(R.id.btn_back);
+        chat_with   = (TextView)view.findViewById(R.id.chat_with);
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +61,8 @@ public class Chat extends Fragment {
                 toPreviousPage();
             }
         });
+
+        chat_with.setText(FirebaseUserDetails.chatWith);
 
         Firebase.setAndroidContext(getContext());
         Log.d("CHAT","Chat: "+ pref.getString(Constants.NAME,"") + "_" + FirebaseUserDetails.chatWith);
