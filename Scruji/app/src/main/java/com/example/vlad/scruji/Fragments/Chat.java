@@ -37,7 +37,7 @@ public class Chat extends Fragment {
     ImageView sendButton;
     EditText messageArea;
     ScrollView scrollView;
-    Firebase reference1, reference2;
+    Firebase reference1, reference2,last1,last2;
     SharedPreferences pref;
     TextView back,chat_with;
 
@@ -66,8 +66,9 @@ public class Chat extends Fragment {
 
         Firebase.setAndroidContext(getContext());
         Log.d("CHAT","Chat: "+ pref.getString(Constants.NAME,"") + "_" + FirebaseUserDetails.chatWith);
-        reference1 = new Firebase("https://scrujichat.firebaseio.com/messages/" + pref.getString(Constants.NAME,"") + "_" + FirebaseUserDetails.chatWith);
-        reference2 = new Firebase("https://scrujichat.firebaseio.com/messages/" + FirebaseUserDetails.chatWith + "_" + pref.getString(Constants.NAME,""));
+        reference1 = new Firebase("https://scrujichat.firebaseio.com/messages/" + pref.getString(Constants.NAME,"") + "/" + FirebaseUserDetails.chatWith);
+        reference2 = new Firebase("https://scrujichat.firebaseio.com/messages/" + FirebaseUserDetails.chatWith + "/" + pref.getString(Constants.NAME,""));
+
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,9 +78,12 @@ public class Chat extends Fragment {
                 if (!messageText.equals("")) {
                     java.util.Map<String, String> map = new HashMap<String, String>();
                     map.put("message", messageText);
+                    map.put("id",pref.getString(Constants.UNIQUE_ID,""));
                     map.put("user", pref.getString(Constants.NAME,""));
                     reference1.push().setValue(map);
                     reference2.push().setValue(map);
+                    reference1.child("last").setValue(map);
+                    reference2.child("last").setValue(map);
                     messageArea.setText("");
                 }
             }
@@ -119,8 +123,9 @@ public class Chat extends Fragment {
 
             }
         });
-        return view;
 
+
+        return view;
     }
         public void addMessageBox(String message, int type) {
             TextView textView = new TextView(getActivity());

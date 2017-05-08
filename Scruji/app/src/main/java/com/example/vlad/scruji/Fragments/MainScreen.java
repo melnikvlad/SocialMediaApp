@@ -68,7 +68,7 @@ public class MainScreen extends android.support.v4.app.Fragment {
                     return fragment;
                 case 2: fragment = new Settings();
                     return fragment;
-                case 3: fragment = new Chats();
+                case 3: fragment = new Dialogs();
                     return fragment;
                 default:
                     return null;
