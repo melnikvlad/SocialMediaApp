@@ -11,15 +11,15 @@
  
  
  $photo_name = $user_id."_".$description;
- $path = "uploads/other/$photo_name.png";
+ $path = "uploads/posts/$photo_name.png";
  
  $actualpath = "http://10.0.2.2/server/$path";
  
- $sql = "INSERT INTO other_photos (user_id,photo) VALUES ('$user_id','$photo_name')";
+ $sql = "INSERT INTO post_photos (user_id,photo) VALUES ('$user_id','$photo_name')";
  
  if(mysqli_query($con,$sql)){
  file_put_contents($path,base64_decode($image));
- 	echo "Successfully Uploaded";
+ echo "Successfully Uploaded";
  }
  
  mysqli_close($con);

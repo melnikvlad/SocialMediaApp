@@ -101,7 +101,13 @@ public class Map extends Fragment  implements OnMapReadyCallback, GoogleApiClien
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToSearch();
+                if(Objects.equals(sharedPreferences.getString(Constants.MAP_TYPE, ""), "6"))
+                {
+                    goToFriends();
+                }
+                else{
+                    goToSearch();
+                }
             }
         });
         viewRv.setOnClickListener(new View.OnClickListener() {
@@ -118,8 +124,6 @@ public class Map extends Fragment  implements OnMapReadyCallback, GoogleApiClien
                 gone.setVisibility(View.INVISIBLE);
             }
         });
-
-
         return view;
     }
 
@@ -229,7 +233,39 @@ public class Map extends Fragment  implements OnMapReadyCallback, GoogleApiClien
                 getUsers();
                 drawUsersCoordsWithTag(sharedPreferences.getString(Constants.TAG_ONCLICK,""));
                 break;
+            case "6":
+                type.setText("Показать моих друзей");
+                cameraUpdate = CameraUpdateFactory.newLatLngZoom(mPos,13);
+                mGoogleMap.moveCamera(cameraUpdate);
+                getFriends();
+                drawFriends();
+                break;
         }
+    }
+
+    private void drawFriends(){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Service service = retrofit.create(Service.class);
+        Call<ArrayList<Markers>> call = service.get_friends_coords(sharedPreferences.getString(Constants.UNIQUE_ID,""));
+        call.enqueue(new retrofit2.Callback<ArrayList<Markers>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Markers>> call, Response<ArrayList<Markers>> response) {
+
+                users = response.body();
+                drawMarkers(users);
+            }
+            @Override
+            public void onFailure(Call<ArrayList<Markers>> call, Throwable t) {
+            }
+        });
     }
 
     private void drawUsers(final LatLng mPos){
@@ -260,6 +296,38 @@ public class Map extends Fragment  implements OnMapReadyCallback, GoogleApiClien
             }
             @Override
             public void onFailure(Call<ArrayList<Markers>> call, Throwable t) {
+            }
+        });
+    }
+
+    private void getFriends(){
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Service service = retrofit.create(Service.class);
+        Call<ArrayList<UserResponse>> call = service.get_user_friends(sharedPreferences.getString(Constants.UNIQUE_ID,""));
+        call.enqueue(new retrofit2.Callback<ArrayList<UserResponse>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserResponse>> call, Response<ArrayList<UserResponse>> response) {
+
+                ArrayList<UserResponse> mResponse = response.body();
+
+                manager = new LinearLayoutManager(getActivity());
+                rv.setLayoutManager(manager);
+                adapter = new UsersAdapter(getActivity(),mResponse);
+                adapter.notifyDataSetChanged();
+                rv.setAdapter(adapter);
+
+            }
+            @Override
+            public void onFailure(Call<ArrayList<UserResponse>> call, Throwable t) {
+                Log.d(Constants.TAG,"FAILURE " +t.getMessage());
             }
         });
     }
@@ -440,6 +508,13 @@ public class Map extends Fragment  implements OnMapReadyCallback, GoogleApiClien
 
     private void goToSearch() {
         SearchTags fragment = new SearchTags();
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.map_frame,fragment);
+        ft.commit();
+    }
+
+    private void goToFriends() {
+        Friends fragment = new Friends();
         android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.map_frame,fragment);
         ft.commit();

@@ -4,12 +4,12 @@ require_once('init.php');
 if($_SERVER['REQUEST_METHOD']=='POST')
 {
 
-	$tag = $_POST['tag'];
+	$user_id = $_POST['user_id'];
 
 	
-	if(!empty($tag))
+	if(!empty($user_id))
 	{
-		$sql= "SELECT * FROM tags WHERE tag='$tag'";
+		$sql= "SELECT * FROM friendships WHERE user_id='$user_id'";
 	if(mysqli_query($con,$sql))
 	{
 		$json= array();
@@ -17,7 +17,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 		while($row = mysqli_fetch_array ($result))     
 		{
 			 $ids = array(
-		        'user_id' => $row['user_id']
+		        'other_user_id' => $row['other_user_id']
 		    );
 			 array_push($json, $ids);
 		}
@@ -33,7 +33,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 	$json2= array();
 
 	foreach($item as $v){
-	$sql= "SELECT * FROM profiles WHERE user_id='$v->user_id'";
+	$sql= "SELECT * FROM profiles WHERE user_id='$v->other_user_id'";
 
 	if(mysqli_query($con,$sql))
 	{

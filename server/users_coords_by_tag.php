@@ -33,7 +33,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 	$json2= array();
 
 	foreach($item as $v){
-	$sql= "SELECT * FROM profiles WHERE user_id='$v->user_id'";
+	$sql= "SELECT * FROM locations WHERE user_id='$v->user_id'";
 
 	if(mysqli_query($con,$sql))
 	{
@@ -43,11 +43,9 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 		while($row = mysqli_fetch_array ($result))     
 		{
 			 $data = array(
-			 	'id' 		=> $row['user_id'],
-		        'name' 		=> $row['user_name'],
-		        'age' 		=> $row['user_age'],
-		        'country' 	=> $row['user_country'],
-		        'city' 		=> $row['user_city']
+			 	'user_id' 		=> $row['user_id'],
+		        'latitude' 		=> $row['latitude'],
+		        'longtitude' 	=> $row['longtitude']
 		    );
 			 array_push($json2, $data);
 		}	

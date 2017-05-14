@@ -88,7 +88,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/search"
         android:foregroundGravity="center"
         android:orientation="vertical">
@@ -101,11 +101,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/settings"
         android:foregroundGravity="center"
         android:orientation="vertical">
-
 
 
     </LinearLayout>
@@ -115,7 +114,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/add"
         android:foregroundGravity="center"
         android:orientation="vertical">
@@ -126,37 +125,6 @@
         </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="@color/cardview_light_background"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/add_photo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Мои фото:"
-                android:textAllCaps="false"
-                android:textColor="@android:color/background_dark"
-                android:textSize="16sp" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/more_photos"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="right"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/more"
-            android:foregroundGravity="right" />
-        </LinearLayout>
-    </LinearLayout>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/photos_rv"
             android:layout_width="match_parent"
@@ -164,84 +132,19 @@
             android:background="@android:color/transparent"
             android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/cardview_light_background"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/my_tags"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Мои тэги:"
-                android:textAllCaps="false"
-                android:textColor="@android:color/background_dark"
-                android:textSize="16sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/more_tags"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/more"
-                    android:foregroundGravity="right" />
-            </LinearLayout>
-        </LinearLayout>
-
-
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:layout_marginTop="3dp"
             android:background="@android:color/transparent"
 
             android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/cardview_light_background"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/my_posts"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Мои записи:"
-                android:textAllCaps="false"
-                android:textColor="@android:color/background_dark"
-                android:textSize="16sp" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/more_posts"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/more"
-                    android:foregroundGravity="right" />
-            </LinearLayout>
-        </LinearLayout>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/posts_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
             android:background="@android:color/transparent"
 
             android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>

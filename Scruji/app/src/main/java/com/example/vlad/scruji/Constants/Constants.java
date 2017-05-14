@@ -4,7 +4,7 @@ package com.example.vlad.scruji.Constants;
 
 public class Constants {
 
-    public static final String IP = "10.0.3.2";
+    public static final String IP = "10.0.2.2";
     public static final String BASE_URL = "http://"+IP+"/server/";
     public static final String PICASSO_MAIN ="http://"+IP+"/server/uploads/main/";
     public static final String PICASSO_OTHER ="http://"+IP+"/server/uploads/other/";

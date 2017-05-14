@@ -4,7 +4,10 @@ require_once('init.php');
 if($_SERVER['REQUEST_METHOD']=='POST')
 {
 
-		$sql= "SELECT * FROM locations";
+	$name = $_POST['name'];
+
+
+	$sql= "SELECT * FROM users  WHERE name='$name'";
 	if(mysqli_query($con,$sql))
 	{
 		$json = array();
@@ -12,9 +15,8 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 		while($row = mysqli_fetch_array ($result))     
 		{
 		    $bus = array(
-		        'user_id' => $row['user_id'],
-		        'latitude' => $row['latitude'],
-		        'longtitude' => $row['longtitude']
+		        'user_id' => $row['unique_id'],
+		        'name' => $row['name']
 		    );
 		    array_push($json, $bus);
 		}
@@ -26,7 +28,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 		
 	}
 	else{
-		echo "Could not create";
+		echo "Could not select";
 	}
 }
 else{

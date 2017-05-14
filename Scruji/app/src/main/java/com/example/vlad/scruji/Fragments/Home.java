@@ -52,7 +52,7 @@ public class Home extends Fragment  {
     private SharedPreferences pref;
     private CircularImageView roundedImageView;
     private TextView name_lastname_age,country_city,friends_count;
-    private LinearLayout search_container;
+    private LinearLayout search_container,friends_container;
     private ImageView m_photos,m_tags,m_posts;
     private MyDB db;
     private RecyclerView rv,photos_rv,posts_rv;
@@ -71,40 +71,45 @@ public class Home extends Fragment  {
         country_city        = (TextView)view.findViewById(R.id.country_city);
         friends_count       = (TextView)view.findViewById(R.id.friend_count);
         search_container    = (LinearLayout)view.findViewById(R.id.search_container);
-        m_photos            = (ImageView)view.findViewById(R.id.more_photos);
-        m_tags              = (ImageView)view.findViewById(R.id.more_tags);
-        m_posts             = (ImageView)view.findViewById(R.id.more_posts);
+        friends_container    = (LinearLayout)view.findViewById(R.id.friends_count_container);
         rv                  = (RecyclerView)view.findViewById(R.id.recycler_view);
         photos_rv           = (RecyclerView)view.findViewById(R.id.photos_rv);
         posts_rv            = (RecyclerView)view.findViewById(R.id.posts_rv);
 
         viewData();
 
-        m_photos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToAddPhoto();
-            }
-        });
-
-        m_tags.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToMyTags();
-            }
-        });
-
-        m_posts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToAddPost();
-            }
-        });
+//        m_photos.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                goToAddPhoto();
+//            }
+//        });
+//
+//        m_tags.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                goToMyTags();
+//            }
+//        });
+//
+//        m_posts.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                goToAddPost();
+//            }
+//        });
 
         search_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToSearchTags();
+            }
+        });
+
+        friends_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToFriends();
             }
         });
 
@@ -345,6 +350,13 @@ public class Home extends Fragment  {
 
     private void goToSearchTags(){
         SearchTags fragment = new SearchTags();
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.home_frame,fragment);
+        ft.commit();
+    }
+
+    private void goToFriends(){
+        Friends fragment = new Friends();
         android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.home_frame,fragment);
         ft.commit();

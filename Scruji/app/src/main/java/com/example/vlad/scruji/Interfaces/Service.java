@@ -58,6 +58,12 @@ public interface Service {
     );
 
     @FormUrlEncoded
+    @POST("get_friends_coords.php")
+    Call<ArrayList<Markers>> get_friends_coords(
+            @Field("user_id") String user_id
+    );
+
+    @FormUrlEncoded
     @POST("insert_tag.php")
     Call<String> insert_tag(
             @Field("user_id")    String user_id,
@@ -141,6 +147,11 @@ public interface Service {
     @FormUrlEncoded
     @POST("get_user_posts.php")
     Call<ArrayList<Post>> get_user_posts(
+            @Field("user_id") String user_id
+    );
+    @FormUrlEncoded
+    @POST("get_user_friends.php")
+    Call<ArrayList<UserResponse>> get_user_friends(
             @Field("user_id") String user_id
     );
 }

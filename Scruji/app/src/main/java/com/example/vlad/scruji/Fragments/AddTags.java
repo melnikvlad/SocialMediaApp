@@ -108,7 +108,6 @@ public class AddTags extends Fragment {
                     boolean can_add_tag = true;
                     temp_list_of_tags = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
                     for(String item:temp_list_of_tags){
-
                         if(Objects.equals(item, itemTag)){
                             can_add_tag = false;
                         }
@@ -136,7 +135,7 @@ public class AddTags extends Fragment {
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
                 final int position = viewHolder.getAdapterPosition();
-
+                final Firebase firebase = new Firebase("https://scrujichat.firebaseio.com/tags");
                 if (direction == ItemTouchHelper.LEFT) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setMessage("Вы уверены,что хотите удалить этот тэг?");
@@ -145,6 +144,7 @@ public class AddTags extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             db.deleteUserTag(pref.getString(Constants.UNIQUE_ID,""),adapter.getTag(position));
                             deleteTagFromServer(pref.getString(Constants.UNIQUE_ID,""),adapter.getTag(position));
+                            firebase.child(adapter.getTag(position)).removeValue();
                             adapter.deleteItem(position);
                             adapter.notifyItemRemoved(position);
                             return;
