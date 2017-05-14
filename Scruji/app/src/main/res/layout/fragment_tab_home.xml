@@ -53,7 +53,10 @@
                     android:textAllCaps="false"
                     android:textColor="@android:color/black"
                     android:textSize="18sp" />
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content">
                 <LinearLayout
                     android:id="@+id/friends_count_container"
                     android:layout_width="wrap_content"
@@ -79,6 +82,47 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/search_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/search"
+        android:foregroundGravity="center"
+        android:orientation="vertical">
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/settings_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/settings"
+        android:foregroundGravity="center"
+        android:orientation="vertical">
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/add_container"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/add"
+        android:foregroundGravity="center"
+        android:orientation="vertical">
+
+
+    </LinearLayout>
+</LinearLayout>
         </LinearLayout>
         </LinearLayout>
 

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.vlad.scruji.Adapters.OtherPhotosAdapter;
@@ -51,6 +52,7 @@ public class Home extends Fragment  {
     private SharedPreferences pref;
     private CircularImageView roundedImageView;
     private TextView name_lastname_age,country_city,friends_count;
+    private LinearLayout search_container;
     private ImageView m_photos,m_tags,m_posts;
     private MyDB db;
     private RecyclerView rv,photos_rv,posts_rv;
@@ -68,6 +70,7 @@ public class Home extends Fragment  {
         name_lastname_age   = (TextView)view.findViewById(R.id.name_lastname_age);
         country_city        = (TextView)view.findViewById(R.id.country_city);
         friends_count       = (TextView)view.findViewById(R.id.friend_count);
+        search_container    = (LinearLayout)view.findViewById(R.id.search_container);
         m_photos            = (ImageView)view.findViewById(R.id.more_photos);
         m_tags              = (ImageView)view.findViewById(R.id.more_tags);
         m_posts             = (ImageView)view.findViewById(R.id.more_posts);
@@ -76,8 +79,6 @@ public class Home extends Fragment  {
         posts_rv            = (RecyclerView)view.findViewById(R.id.posts_rv);
 
         viewData();
-
-
 
         m_photos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +98,13 @@ public class Home extends Fragment  {
             @Override
             public void onClick(View view) {
                 goToAddPost();
+            }
+        });
+
+        search_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToSearchTags();
             }
         });
 
@@ -144,7 +152,6 @@ public class Home extends Fragment  {
             public void onResponse(Call<String> call, Response<String> response) {
 
                 String mResponse = response.body();
-//                Log.d("TAG+","FR COUNT "+mResponse.size());
                 friends_count.setText(mResponse);
             }
             @Override
@@ -334,6 +341,13 @@ public class Home extends Fragment  {
                         Log.d("TAG+","PICASSO image failed");
                     }
                 });
+    }
+
+    private void goToSearchTags(){
+        SearchTags fragment = new SearchTags();
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.home_frame,fragment);
+        ft.commit();
     }
 
     private void goToAddPhoto(){

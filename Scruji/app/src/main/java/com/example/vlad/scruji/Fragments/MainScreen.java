@@ -22,7 +22,7 @@ public class MainScreen extends android.support.v4.app.Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final int[] icons = {R.drawable.profile, R.drawable.search2, R.drawable.settings2, R.drawable.chat2};
+        final int[] icons = {R.drawable.profile,R.drawable.settings2, R.drawable.chat2};
         View view = inflater.inflate(R.layout.fragment_main_screen_with_tabs,container,false);
         tabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
         viewPager = (ViewPager) view.findViewById(R.id.main_tab_content);
@@ -64,11 +64,9 @@ public class MainScreen extends android.support.v4.app.Fragment {
                 case 0:
                     fragment = new Home();
                     return fragment;
-                case 1: fragment = new Map();
+                case 1: fragment = new Settings();
                     return fragment;
-                case 2: fragment = new Settings();
-                    return fragment;
-                case 3: fragment = new Dialogs();
+                case 2: fragment = new Dialogs();
                     return fragment;
                 default:
                     return null;

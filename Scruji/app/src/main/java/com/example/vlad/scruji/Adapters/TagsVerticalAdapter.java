@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.vlad.scruji.Constants.Constants;
-import com.example.vlad.scruji.Fragments.UsersWithEqualTagsFragment;
+import com.example.vlad.scruji.Fragments.Map;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.R;
 
@@ -50,7 +50,7 @@ public class TagsVerticalAdapter extends RecyclerView.Adapter<TagsVerticalAdapte
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(Constants.TAG_ONCLICK,holder.tag.getText().toString());
                 editor.apply();
-
+                goToMap();
             }
         });
     }
@@ -90,8 +90,8 @@ public class TagsVerticalAdapter extends RecyclerView.Adapter<TagsVerticalAdapte
         notifyDataSetChanged();
     }
 
-    private void goToUsersFragment(){
-        UsersWithEqualTagsFragment fragment = new UsersWithEqualTagsFragment();
+    private void goToMap(){
+        Map fragment = new Map();
         FragmentManager fragmentManager = ((MainActivity)mContext).getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.home_frame,fragment).commit();
         fragmentManager.beginTransaction().addToBackStack(null);

@@ -3,6 +3,7 @@ package com.example.vlad.scruji.Adapters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.vlad.scruji.Constants.Constants;
+import com.example.vlad.scruji.Fragments.Map;
 import com.example.vlad.scruji.MainActivity;
 import com.example.vlad.scruji.R;
 
@@ -46,9 +49,18 @@ public class TagsPopularAdapter extends RecyclerView.Adapter<TagsPopularAdapter.
 
         holder.tag.setText(filtered.get(position));
         holder.count.setText(fCount.get(position));
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences prefs = getPreferences();
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(Constants.TAG_ONCLICK,holder.tag.getText().toString());
+                editor.apply();
+                goToMap();
+            }
+        });
 
     }
-
 
     @Override
     public int getItemCount() {
@@ -98,6 +110,12 @@ public class TagsPopularAdapter extends RecyclerView.Adapter<TagsPopularAdapter.
             }
         }
         notifyDataSetChanged();
+    }
+    private void goToMap(){
+        Map fragment = new Map();
+        FragmentManager fragmentManager = ((MainActivity)mContext).getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.home_frame,fragment).commit();
+        fragmentManager.beginTransaction().addToBackStack(null);
     }
 }
 

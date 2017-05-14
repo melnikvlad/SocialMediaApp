@@ -52,6 +52,12 @@ public interface Service {
     );
 
     @FormUrlEncoded
+    @POST("users_coords_by_tag.php")
+    Call<ArrayList<Markers>> users_coords_by_tag(
+            @Field("tag") String tag
+    );
+
+    @FormUrlEncoded
     @POST("insert_tag.php")
     Call<String> insert_tag(
             @Field("user_id")    String user_id,
