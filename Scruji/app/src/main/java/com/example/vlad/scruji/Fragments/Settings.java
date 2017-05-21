@@ -34,7 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Settings extends Fragment implements View.OnClickListener {
 
-    private TextView tv_name;
+    private TextView tv_name,back;
     private SharedPreferences pref;
     private AppCompatButton btn_change_password,btn_logout;
     private EditText et_old_password,et_new_password;
@@ -55,10 +55,12 @@ public class Settings extends Fragment implements View.OnClickListener {
 
     private void initViews(View view){
         tv_name = (TextView)view.findViewById(R.id.tv_name);
+        back = (TextView)view.findViewById(R.id.btn_back);
         btn_change_password = (AppCompatButton)view.findViewById(R.id.btn_chg_password);
         btn_logout = (AppCompatButton)view.findViewById(R.id.btn_logout);
         btn_change_password.setOnClickListener(this);
         btn_logout.setOnClickListener(this);
+        back.setOnClickListener(this);
     }
     private void showDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -108,6 +110,8 @@ public class Settings extends Fragment implements View.OnClickListener {
             case R.id.btn_logout:
                 logout();
                 break;
+            case R.id.btn_back:
+                goToHome();
         }
     }
 
@@ -169,6 +173,14 @@ public class Settings extends Fragment implements View.OnClickListener {
             }
         });
     }
+
+    private void goToHome(){
+        Home fragment = new Home();
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.settings_frame,fragment);
+        ft.commit();
+    }
+
     public Context getActivityContex(){
         return MainActivity.getContextOfApplication();
     }

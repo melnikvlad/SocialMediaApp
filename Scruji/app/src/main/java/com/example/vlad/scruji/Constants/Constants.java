@@ -27,7 +27,7 @@ public class Constants {
 
     public static final String TAG = "TAG+";
     public static final String TEMP_TAG = "temp_tag";
-    public static final int TABS_COUNT = 3;
+    public static final int TABS_COUNT = 2;
     public static final int PICK_IMAGE_REQUEST = 1;
     public static final String MAP_TYPE = "map";
 

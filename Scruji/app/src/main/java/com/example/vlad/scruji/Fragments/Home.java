@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -52,8 +51,7 @@ public class Home extends Fragment  {
     private SharedPreferences pref;
     private CircularImageView roundedImageView;
     private TextView name_lastname_age,country_city,friends_count;
-    private LinearLayout search_container,friends_container;
-    private ImageView m_photos,m_tags,m_posts;
+    private LinearLayout search_container,friends_container,settings_container,add_container;
     private MyDB db;
     private RecyclerView rv,photos_rv,posts_rv;
     private RecyclerView.Adapter adapter;
@@ -71,33 +69,15 @@ public class Home extends Fragment  {
         country_city        = (TextView)view.findViewById(R.id.country_city);
         friends_count       = (TextView)view.findViewById(R.id.friend_count);
         search_container    = (LinearLayout)view.findViewById(R.id.search_container);
-        friends_container    = (LinearLayout)view.findViewById(R.id.friends_count_container);
+        settings_container  = (LinearLayout)view.findViewById(R.id.settings_container);
+        friends_container   = (LinearLayout)view.findViewById(R.id.friends_count_container);
+        add_container       = (LinearLayout)view.findViewById(R.id.add_container);
         rv                  = (RecyclerView)view.findViewById(R.id.recycler_view);
         photos_rv           = (RecyclerView)view.findViewById(R.id.photos_rv);
         posts_rv            = (RecyclerView)view.findViewById(R.id.posts_rv);
 
         viewData();
 
-//        m_photos.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                goToAddPhoto();
-//            }
-//        });
-//
-//        m_tags.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                goToMyTags();
-//            }
-//        });
-//
-//        m_posts.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                goToAddPost();
-//            }
-//        });
 
         search_container.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +90,20 @@ public class Home extends Fragment  {
             @Override
             public void onClick(View view) {
                 goToFriends();
+            }
+        });
+
+        settings_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToSettings();
+            }
+        });
+
+        add_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToAddStuff();
             }
         });
 
@@ -362,26 +356,20 @@ public class Home extends Fragment  {
         ft.commit();
     }
 
-    private void goToAddPhoto(){
-        AddPhoto fragment = new AddPhoto();
+    private void goToAddStuff(){
+        Add fragment = new Add();
         android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.home_frame,fragment);
         ft.commit();
     }
 
-    private void goToAddPost() {
-        AddPost fragment = new AddPost();
+    private void goToSettings(){
+        Settings fragment = new Settings();
         android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.home_frame,fragment);
         ft.commit();
     }
 
-    private void goToMyTags(){
-        AddTags fragment = new AddTags();
-        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.home_frame,fragment);
-        ft.commit();
-    }
 
     public Context getActivityContex(){
         return MainActivity.getContextOfApplication();

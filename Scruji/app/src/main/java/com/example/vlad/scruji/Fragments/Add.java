@@ -1,11 +1,14 @@
 package com.example.vlad.scruji.Fragments;
 
-
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -13,11 +16,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +38,7 @@ import com.example.vlad.scruji.Adapters.TagsVerticalAdapter;
 import com.example.vlad.scruji.Constants.Constants;
 import com.example.vlad.scruji.Interfaces.Service;
 import com.example.vlad.scruji.MainActivity;
+import com.example.vlad.scruji.Models.Post;
 import com.example.vlad.scruji.Models.Tag;
 import com.example.vlad.scruji.Models.UserTagsResponse;
 import com.example.vlad.scruji.R;
@@ -43,7 +51,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -53,35 +66,48 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class AddTags extends Fragment {
-    private TextView back,add;
-    private EditText editText;
-    private SharedPreferences pref;
-    private MyDB db;
-    private RecyclerView rv,rv_popular;
-    private TagsVerticalAdapter adapter;
-    private TagsPopularAdapter popularAdapter;
-    private RecyclerView.LayoutManager manager,manager2;
-    private List<String> list = new ArrayList<>();
-    private SearchView searchView;
+import static android.app.Activity.RESULT_OK;
+
+
+public class Add extends Fragment implements View.OnClickListener{
+    TextView back,add_p,add_t,add_n,add,add_post;
+    EditText editText,post_description;
+    LinearLayout container_p,container_t,container_n;
+    Bitmap bitmap;
+    Button saveButton;
+    ImageView imageView,post_image;
+    SharedPreferences pref;
+    MyDB db;
+    RecyclerView rv,rv_popular;
+    TagsVerticalAdapter adapter;
+    TagsPopularAdapter popularAdapter;
+    RecyclerView.LayoutManager manager,manager2;
+    List<String> list = new ArrayList<>();
+    SearchView searchView;
     List<String> popular_tags_list = new ArrayList<>();
     List<String> popular_tags_count_list = new ArrayList<>();
-
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_my_tags,container,false);
-        back        = (TextView) view.findViewById(R.id.btn_back);
-        add         = (TextView) view.findViewById(R.id.btn_add);
+        pref = getPreferences();
+        View view = inflater.inflate(R.layout.fragment_add_all,container,false);
+        back  = (TextView)view.findViewById(R.id.btn_back);
+        add_p = (TextView)view.findViewById(R.id.add_p);
+        add_t = (TextView)view.findViewById(R.id.add_t);
+        add_n = (TextView)view.findViewById(R.id.add_n);
+        container_p = (LinearLayout)view.findViewById(R.id.container_p);
+        container_t = (LinearLayout)view.findViewById(R.id.container_t);
+        container_n = (LinearLayout)view.findViewById(R.id.container_n);
+
+        imageView   = (ImageView) view.findViewById(R.id.imageView);
+        saveButton  = (Button) view.findViewById(R.id.btn_save);
+
+        add         = (TextView) view.findViewById(R.id.btn_add_tag);
         editText    = (EditText) view.findViewById(R.id.et_add_tag);
         rv          = (RecyclerView) view.findViewById(R.id.recycler_view);
         rv_popular  = (RecyclerView) view.findViewById(R.id.popular_tags);
         searchView  = (SearchView)view.findViewById(R.id.serchview);
-
-        pref = getPreferences();
-        db = new MyDB(getActivityContex());
-
         manager = new LinearLayoutManager(getActivity());
         manager2 = new LinearLayoutManager(getActivity());
         rv_popular.setLayoutManager(manager);
@@ -89,44 +115,21 @@ public class AddTags extends Fragment {
         rv.setLayoutManager(manager2);
         rv.setAdapter(adapter);
 
-        viewData();
+        add_post         = (TextView) view.findViewById(R.id.btn_add_post);
+        post_description = (EditText)view.findViewById(R.id.post_description);
+        post_image  = (ImageView)view.findViewById(R.id.post_image);
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToHome();
-            }
-        });
+        back.setOnClickListener(this);
+        add_p.setOnClickListener(this);
+        add_t.setOnClickListener(this);
+        add_n.setOnClickListener(this);
+        saveButton.setOnClickListener(this);
+        add.setOnClickListener(this);
+        add_post.setOnClickListener(this);
+        post_image.setOnClickListener(this);
+        imageView.setOnClickListener(this);
 
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String itemTag = editText.getText().toString();
-                if(!itemTag.equals("")){
-                    List<String> temp_list_of_tags = new ArrayList<String>();
-                    boolean can_add_tag = true;
-                    temp_list_of_tags = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
-                    for(String item:temp_list_of_tags){
-                        if(Objects.equals(item, itemTag)){
-                            can_add_tag = false;
-                        }
-                    }
-                    if(can_add_tag){
-                        insertTagToMySQLandToSQLite(itemTag);
-                        addTagToFirebase(itemTag);
-                    }
-                    else{
-                        Toast.makeText(getActivityContex(),"Тэг уже был добавлен",Toast.LENGTH_LONG).show();
-                    }
-                }
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString(Constants.TEMP_TAG, "");
-                editor.apply();
-            }
-        });
-
-
+        db = new MyDB(getActivityContex());
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -162,8 +165,6 @@ public class AddTags extends Fragment {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(rv);
-
-        setupSearchView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -175,8 +176,190 @@ public class AddTags extends Fragment {
                 return true;
             }
         });
-
         return view;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.btn_back:
+                goToHome();
+                break;
+            case R.id.add_p:
+                viewPhotoContainer();
+                break;
+            case R.id.add_t:
+                viewTagContainer();
+                setupSearchView();
+                viewData();
+                break;
+            case R.id.add_n:
+                viewPostContainer();
+                break;
+            case R.id.btn_save:
+                uploadImage();
+                break;
+            case R.id.btn_add_tag:
+                addTag();
+                break;
+            case R.id.btn_add_post:
+                addPost();
+                break;
+            case R.id.post_image:
+                showFileChooserPost();
+                break;
+            case R.id.imageView:
+                showFileChooser();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void viewPhotoContainer(){
+        container_p.setVisibility(View.VISIBLE);
+        container_t.setVisibility(View.GONE);
+        container_n.setVisibility(View.GONE);
+    }
+
+    private void viewTagContainer(){
+        container_p.setVisibility(View.GONE);
+        container_t.setVisibility(View.VISIBLE);
+        container_n.setVisibility(View.GONE);
+    }
+
+    private void viewPostContainer(){
+        container_p.setVisibility(View.GONE);
+        container_t.setVisibility(View.GONE);
+        container_n.setVisibility(View.VISIBLE);
+    }
+
+    private void goToHome(){
+        Home profile = new Home();
+        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.add_frame,profile);
+        ft.commit();
+    }
+
+    private void addPost(){
+        DateFormat df = new SimpleDateFormat("EEE,d MMM yyyy HH mm");
+        String date = df.format(Calendar.getInstance().getTime());
+        String desc = post_description.getText().toString();
+
+        uploadPostImage(date);
+        insertPostToMySQLandToSQLite(desc,date);
+    }
+
+    private void addTag(){
+        String itemTag = editText.getText().toString();
+        if(!itemTag.equals("")){
+            List<String> temp_list_of_tags = new ArrayList<String>();
+            boolean can_add_tag = true;
+            temp_list_of_tags = db.getUserTags(pref.getString(Constants.UNIQUE_ID,""));
+            for(String item:temp_list_of_tags){
+                if(Objects.equals(item, itemTag)){
+                    can_add_tag = false;
+                }
+            }
+            if(can_add_tag){
+                insertTagToMySQLandToSQLite(itemTag);
+                addTagToFirebase(itemTag);
+            }
+            else{
+                Toast.makeText(getActivityContex(),"Тэг уже был добавлен",Toast.LENGTH_LONG).show();
+            }
+        }
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(Constants.TEMP_TAG, "");
+        editor.apply();
+    }
+
+    public void uploadImage(){
+
+        String image = getStringImage(bitmap);
+        DateFormat df = new SimpleDateFormat("EEE,d MMM yyyy HH mm");
+        String date = df.format(Calendar.getInstance().getTime());
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Service service = retrofit.create(Service.class);
+
+        Call<String> call = service.upload_other_photos(image,pref.getString(Constants.UNIQUE_ID,""),date);
+        call.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                goToHome();
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("TAG+","Error "+ t.getMessage());
+            }
+        });
+    }
+
+    public void uploadPostImage(String date){
+        String image;
+        if(getStringImage(bitmap)!=""){
+            image = getStringImage(bitmap);
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+
+            Service service = retrofit.create(Service.class);
+
+            Call<String> call = service.upload_post_photo(image,pref.getString(Constants.UNIQUE_ID,""),date);
+            call.enqueue(new retrofit2.Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+
+    public String getStringImage(Bitmap bmp){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+    }
+
+    private void showFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constants.PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri filePath = data.getData();
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), filePath);
+                imageView.setImageBitmap(bitmap);
+                post_image.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void viewData() {
@@ -208,10 +391,10 @@ public class AddTags extends Fragment {
                         jsonArray.put(obj.get(key));
                     }
 
-                 for(int i=0;i<jsonArray.length();i++){
-                     JSONObject users = (JSONObject) jsonArray.get(i);
-                     popular_tags_count_list.add(String.valueOf(users.getJSONObject("users").length()));
-                 }
+                    for(int i=0;i<jsonArray.length();i++){
+                        JSONObject users = (JSONObject) jsonArray.get(i);
+                        popular_tags_count_list.add(String.valueOf(users.getJSONObject("users").length()));
+                    }
 
 
                     manager = new LinearLayoutManager(getActivity());
@@ -359,17 +542,63 @@ public class AddTags extends Fragment {
         });
     }
 
+    private void insertPostToMySQLandToSQLite(final String description, final String date){
+        final String id = pref.getString(Constants.UNIQUE_ID,"");
+        String photo_name = null;
+        if(bitmap != null){
+            photo_name = id+"_"+date;
+        }
+
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        Service service = retrofit.create(Service.class);
+        Call<String> call = service.insert_post(id, date, description, photo_name);
+        final String finalPhoto_name = photo_name;
+        call.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Post post = new Post(id, date, description, finalPhoto_name);
+                db.insertPost(post);
+                goToHome();
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
+        });
+    }
+
+    public String getStringImagePost(Bitmap bmp){
+        if(bmp != null)
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] imageBytes = baos.toByteArray();
+            return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        }
+        else{
+            return "";
+        }
+
+    }
+
+    private void showFileChooserPost() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.PICK_IMAGE_REQUEST);
+    }
+
     public void setupSearchView() {
         searchView.setIconifiedByDefault(false);
         searchView.setSubmitButtonEnabled(false);
         searchView.setQueryHint("Найти тэг");
-    }
-
-    private void goToHome(){
-        Home fragment = new Home();
-        android.support.v4.app.FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.my_tags_frame,fragment);
-        ft.commit();
     }
 
     public Context getActivityContex(){
