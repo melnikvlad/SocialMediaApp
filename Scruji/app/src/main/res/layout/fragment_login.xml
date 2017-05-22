@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
 
-        android:text="Добро пожаловать"
+        android:text="Бублик"
         android:textAlignment="center"
         android:textColor="@android:color/background_light"
         android:textSize="30sp" />

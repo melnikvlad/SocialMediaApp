@@ -425,12 +425,10 @@ public class Add extends Fragment implements View.OnClickListener{
             public void onResponse(String s) {
                 Firebase.setAndroidContext(getContext());
                 Firebase reference = new Firebase("https://scrujichat.firebaseio.com/tags");
-                if(s.equals("null")) {
-                    reference.child(tag).child("users").push().setValue(pref.getString(Constants.UNIQUE_ID,""));
-                }
-                else {
-                    reference.child(tag).child("users").push().setValue(pref.getString(Constants.UNIQUE_ID,""));
-                }
+                
+                reference.child(tag).child("users").push().setValue(pref.getString(Constants.UNIQUE_ID,""));
+
+
             }
         },new com.android.volley.Response.ErrorListener(){
             @Override

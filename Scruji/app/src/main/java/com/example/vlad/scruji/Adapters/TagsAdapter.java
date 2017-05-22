@@ -56,7 +56,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(Constants.TAG_ONCLICK,holder.tag.getText().toString());
                 editor.apply();
-                goToSettingsFragment();
+                goToUSers();
             }
         });
     }
@@ -66,7 +66,7 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.ViewHolder> {
         return mDataSet.size();
     }
 
-    private void goToSettingsFragment(){
+    private void goToUSers(){
         UsersWithEqualTagsFragment fragment = new UsersWithEqualTagsFragment();
         FragmentManager fragmentManager = ((MainActivity)mContext).getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.home_frame,fragment).commit();

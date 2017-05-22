@@ -17,43 +17,145 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:background="@android:color/background_light"
-            android:gravity="center_vertical|center"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/back_to_home"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="Назад" />
+                android:layout_width="72dp"
+                android:layout_height="38dp"
+                android:text="Назад"
+                android:textAlignment="textStart" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:background="@android:color/background_light">
 
             <TextView
+                android:id="@+id/view_u"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Показать пользователей >"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/dismiss_u"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Скрыть пользователей>"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/new_p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Предложить новость >"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/dismiss_p"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Скрыть >"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/container_u"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.v7.widget.SearchView
+                android:id="@+id/serchview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@android:color/background_light">
+
+            </android.support.v7.widget.SearchView>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_for_equal_tag"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:layout_marginTop="1dp"
+                android:background="@android:color/transparent"
+                android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/container_p"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/background_light"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/post_description"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:hint="Текст..."
+                android:singleLine="false" />
+
+
+            <TextView
+                android:id="@+id/btn_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:gravity="center"
-                android:text="Пользователи по тэгу"
-                android:textColor="@android:color/black"
+                android:text="Добавить запись"
+                android:textAllCaps="false"
+                android:textColor="@android:color/background_dark"
                 android:textSize="18sp" />
         </LinearLayout>
 
-        <android.support.v7.widget.SearchView
-            android:id="@+id/serchview"
+        <LinearLayout
+            android:id="@+id/container_news"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:background="@android:color/background_light">
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
 
-        </android.support.v7.widget.SearchView>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_weight="20"
+                android:layout_height="wrap_content"
+                android:id="@+id/scrollView">
+                <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/layout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/layout1">
+                    </LinearLayout>
+                </RelativeLayout>
+            </ScrollView>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_for_equal_tag"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="1dp"
-            android:background="@android:color/transparent"
-            android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
 
     </LinearLayout>
 </FrameLayout>
